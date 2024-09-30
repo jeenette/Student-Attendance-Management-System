@@ -17,3 +17,4 @@ The Student Attendance Management System provides a user-friendly platform that 
 **Link of UI/UX**
 
 **Link of ERD**
+https://lucid.app/lucidchart/9db6182e-4bc3-4e35-8da3-ba75ea1103c6/edit?viewport_loc=-776%2C-576%2C2411%2C1114%2CfFCdXRHc5cF0&invitationId=inv_329f8fbe-0a39-4c69-aad6-7d2e14236a1d 
