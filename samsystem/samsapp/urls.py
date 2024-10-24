@@ -10,4 +10,5 @@ urlpatterns = [
 ]
     path('students/', views.student_list, name='student_list'),
     path('student/report/', views.student_report, name='student_report'),
+    path('report/<int:student_id>/', views.student_report, name='student_report'),
 ]
