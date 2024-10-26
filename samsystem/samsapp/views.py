@@ -1,23 +1,10 @@
 from django.shortcuts import render, HttpResponse
-import csv
+
 # Create your views here.
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Student
-from .forms import StudentForm
-import logging
+from .models import Class, Student
+from .forms import ClassForm, StudentForm
 
-logger = logging.getLogger(__name__)
-
-def student_report(request, student_id):
-    try:
-        student = Student.objects.get(student_id=student_id)
-        ...
-    except Student.DoesNotExist:
-        logger.error(f"Student with ID {student_id} does not exist.")
-        return HttpResponse("Student not found.", status=404)
-    except Exception as e:
-        logger.error(f"Error generating report: {e}")
-        return HttpResponse("Error generating report.", status=500)
 
 def student_list(request):
     students = Student.objects.all()
@@ -51,32 +38,48 @@ def student_delete(request, pk):
         return redirect('student_list')
     return render(request, 'samsapp/student_confirm_delete.html', {'student': student})
 
-def student_report(request, student_id):
-    try:
-        # Retrieve the student with the given student_id
-        student = Student.objects.get(student_id=student_id)
 
-        # Prepare the CSV response
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="{student.student_fullname}_report.csv"'
-
-        writer = csv.writer(response)
-        writer.writerow(['Name', 'Email', 'Birth Date', 'Enrollment Date'])
-
-        # Write the student's data
-        writer.writerow([
-            student.student_fullname or '',  # Handle empty fields
-            student.student_email or '',
-            student.birth_date or '',
-            student.enrollment_date or ''
-        ])
-
-        return response
-    except Student.DoesNotExist:
-        return HttpResponse("Student not found.", status=404)
-    except Exception as e:
-        # Log the error or print it for debugging
-        print(f"Error generating report: {e}")
-        return HttpResponse("Error generating report.", status=500)
 def some_view(request):
     return HttpResponse("Hello, this is the Ephan view!")
+
+# Class List
+def class_list(request):
+    classes = Class.objects.all()
+    return render(request, 'samsapp/class_list.html', {'classes': classes})
+
+# Create Class
+def class_add(request):
+    print("class_create view called")  # Print statement for debugging
+    if request.method == "POST":
+        form = ClassForm(request.POST)
+        if form.is_valid():
+            form.save()
+            print("Form saved successfully")  # Print on successful form save
+            return redirect('class_list')
+        else:
+            print("Form is not valid:", form.errors)  # Print form errors
+    else:
+        form = ClassForm()
+    return render(request, 'samsapp/class_form.html', {'form': form})
+
+
+
+# Update Class
+def class_update(request, class_id):
+    class_instance = get_object_or_404(Class, pk=class_id)
+    if request.method == "POST":
+        form = ClassForm(request.POST, instance=class_instance)
+        if form.is_valid():
+            form.save()
+            return redirect('class_list')
+    else:
+        form = ClassForm(instance=class_instance)
+    return render(request, 'samsapp/class_form.html', {'form': form})
+
+# Delete Class
+def class_delete(request, class_id):
+    class_instance = get_object_or_404(Class, pk=class_id)
+    if request.method == "POST":
+        class_instance.delete()
+        return redirect('class_list')
+    return render(request, 'samsapp/class_confirm_delete.html', {'class': class_instance})
