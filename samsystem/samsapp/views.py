@@ -4,6 +4,12 @@ from django.shortcuts import render, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Class, Student
 from .forms import ClassForm, StudentForm
+from django.contrib.auth.models import User
+from .forms import UserRegistrationForm, UserUpdateForm
+from django.contrib import messages
+from django.contrib.auth import authenticate, login
+from .forms import LoginForm
+from django.contrib.auth import logout
 
 
 def student_list(request):
@@ -83,3 +89,58 @@ def class_delete(request, class_id):
         class_instance.delete()
         return redirect('class_list')
     return render(request, 'samsapp/class_confirm_delete.html', {'class': class_instance})
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            messages.success(request, 'Account created successfully!')
+            return redirect('login')  # Change to your login URL
+    else:
+        form = UserRegistrationForm()
+    return render(request, 'samsapp/register.html', {'form': form})
+
+def user_list(request):
+    users = User.objects.all()
+    return render(request, 'samsapp/user_list.html', {'users': users})
+
+def user_update(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'User information updated successfully!')
+            return redirect('user_list')  # Change to your user list URL
+    else:
+        form = UserUpdateForm(instance=user)
+    return render(request, 'samsapp/user_update.html', {'form': form})
+
+def user_delete(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    user.delete()
+    messages.success(request, 'User account deleted successfully!')
+    return redirect('user_list')  # Change to your user list URL
+
+def login_view(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('user_list')  # Redirect to a view after successful login
+    else:
+        form = LoginForm()
+    return render(request, 'samsapp/login.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
