@@ -16,7 +16,7 @@
         <div class="card-body">
             <form method="post">
                 {% csrf_token %}
-                {{ form.as_p }}
+                {{ form.as_p }}  <!-- This should render your fields correctly -->
                 <div class="text-end">
                     <button type="submit" class="btn btn-success">{% if form.instance.pk %}Update{% else %}Save{% endif %}</button>
                     <a href="{% url 'class_list' %}" class="btn btn-secondary">Cancel</a>

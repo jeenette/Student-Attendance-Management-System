@@ -10,6 +10,8 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from .forms import LoginForm
 from django.contrib.auth import logout
+import csv
+
 
 
 def student_list(request):
@@ -32,18 +34,54 @@ def student_update(request, pk):
         form = StudentForm(request.POST, instance=student)
         if form.is_valid():
             form.save()
+            messages.success(request, "Student updated successfully!")
             return redirect('student_list')
     else:
-        form = StudentForm(instance=student)
-    return render(request, 'samsapp/student_form.html', {'form': form})
+        form = StudentForm(instance=student)  # Load existing student data into the form
+    return render(request, 'samsapp/student_form.html', {'form': form, 'is_update': True})
+
+
+
 
 def student_delete(request, pk):
     student = get_object_or_404(Student, pk=pk)
+    
+    # Check if the request method is POST, which indicates confirmation
     if request.method == "POST":
         student.delete()
+        # Optionally, you could add a message here to inform the user of success
+        messages.success(request, 'Student deleted successfully.')
         return redirect('student_list')
-    return render(request, 'samsapp/student_confirm_delete.html', {'student': student})
+    
+    # You can also handle GET requests to potentially show a confirmation (not needed here since we're using JS)
+    return redirect('student_list')
 
+
+def student_report(request, pk):
+    try:
+        # Get the specific student by ID
+        student = get_object_or_404(Student, pk=pk)
+        
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="student_report_{student.student_id}.csv"'
+
+        writer = csv.writer(response)
+        # Add the header row including Student ID
+        writer.writerow(['Student ID', 'Name', 'Email', 'Birth Date', 'Enrollment Date'])
+
+        # Write the specific student's data to the CSV, including Student ID
+        writer.writerow([
+            student.student_id,  # Include the Student ID here
+            student.student_fullname or '',
+            student.student_email or '',
+            student.birth_date or '',
+            student.enrollment_date or ''
+        ])
+
+        return response
+    except Exception as e:
+        print(f"Error generating report: {e}")
+        return HttpResponse("Error generating report.", status=500)
 
 def some_view(request):
     return HttpResponse("Hello, this is the Ephan view!")
