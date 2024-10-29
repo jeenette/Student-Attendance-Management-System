@@ -36,7 +36,7 @@
                             <td>{{ student.student_email }}</td>
                             <td>No specified</td>
                             <td class="text-center">
-                                <a href="{% url 'student_update' student.pk %}" class="btn btn-warning btn-sm me-2">Edit</a>
+                                <a href="{% url 'student_update' student.pk %}" class="btn btn-warning btn-sm me-2" onclick="return confirm('Do you want to edit this student?');">Edit</a>
                                 <form action="{% url 'student_delete' student.pk %}" method="post" style="display: inline;">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this student?');">Delete</button>
