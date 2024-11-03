@@ -9,11 +9,19 @@
         .card-header h2 {
             margin: 0; /* Remove default margin for proper centering */
         }
+        .logout-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
     </style>
 </head>
 <body class="bg-light">
 
 <div class="container mt-5">
+    <!-- Logout Button -->
+    <a href="{% url 'logout' %}" class="btn btn-danger logout-btn">Logout</a>
+
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white text-center">
             <h2>{{ is_update|yesno:"Update Student,Add New Student" }}</h2>
