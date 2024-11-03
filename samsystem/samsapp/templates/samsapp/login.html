@@ -14,9 +14,12 @@
                 <form method="post">
                     {% csrf_token %}
                     {{ form.as_p }}
-                    <div class="text-center">
+                    <div class="text-center mb-3">
                         <button type="submit" class="btn btn-primary btn-sm" style="width: 25%;">Login</button>
                     </div>
+                    <p class="text-center">
+                        Don't have an account? <a href="{% url 'register' %}">Register here</a>
+                    </p>
                 </form>
             </div>
         </div>
