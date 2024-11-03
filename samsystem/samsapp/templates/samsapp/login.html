@@ -11,9 +11,25 @@
         <h2 class="text-center mb-4">Login</h2>
         <div class="card shadow-sm">
             <div class="card-body">
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Please correct the following errors:</strong>
+                        <ul>
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <li>{{ field.label }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
                 <form method="post">
                     {% csrf_token %}
                     {{ form.as_p }}
+                    <input type="hidden" name="next" value="{{ request.GET.next|default:'' }}">
                     <div class="text-center mb-3">
                         <button type="submit" class="btn btn-primary btn-sm" style="width: 25%;">Login</button>
                     </div>
