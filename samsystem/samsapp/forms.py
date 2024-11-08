@@ -18,6 +18,7 @@ class StudentForm(forms.ModelForm):
         }
 
 
+
 class ClassForm(forms.ModelForm):
     class Meta:
         model = Class

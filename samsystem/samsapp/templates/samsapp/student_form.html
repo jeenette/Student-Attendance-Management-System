@@ -8,6 +8,7 @@
     <style>
         .card-header h2 {
             margin: 0; /* Remove default margin for proper centering */
+            margin: 0;
         }
         .logout-btn {
             position: absolute;
@@ -15,6 +16,14 @@
             right: 15px;
         }
     </style>
+    <script>
+        // Set today's date as the max date for birth_date input
+        document.addEventListener("DOMContentLoaded", function() {
+            const today = new Date().toISOString().split("T")[0];
+            document.getElementById("id_birth_date").setAttribute("max", today);
+            document.getElementById("id_enrollment_date").setAttribute("max", today);
+        });
+    </script>
 </head>
 <body class="bg-light">
 
@@ -33,26 +42,58 @@
                     <label for="id_student_fullname" class="col-sm-2 col-form-label">Full Name</label>
                     <div class="col-sm-10">
                         {{ form.student_fullname }}
+                        {% if form.student_fullname.errors %}
+                            <div class="text-danger">
+                                {% for error in form.student_fullname.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
+                
                 <div class="mb-3 row">
                     <label for="id_student_email" class="col-sm-2 col-form-label">Email</label>
                     <div class="col-sm-10">
                         {{ form.student_email }}
+                        {% if form.student_email.errors %}
+                            <div class="text-danger">
+                                {% for error in form.student_email.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
+                
                 <div class="mb-3 row">
                     <label for="id_birth_date" class="col-sm-2 col-form-label">Birth Date</label>
                     <div class="col-sm-10">
                         {{ form.birth_date }}
+                        {% if form.birth_date.errors %}
+                            <div class="text-danger">
+                                {% for error in form.birth_date.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
+                
                 <div class="mb-3 row">
                     <label for="id_enrollment_date" class="col-sm-2 col-form-label">Enrollment Date</label>
                     <div class="col-sm-10">
                         {{ form.enrollment_date }}
+                        {% if form.enrollment_date.errors %}
+                            <div class="text-danger">
+                                {% for error in form.enrollment_date.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
+                
                 <div class="text-center mt-4">
                     <button type="submit" class="btn btn-success">{% if is_update %}Update{% else %}Save{% endif %}</button>
                     <a href="{% url 'student_list' %}" class="btn btn-secondary">Back to Student List</a>
