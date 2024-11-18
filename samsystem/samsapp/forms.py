@@ -23,6 +23,9 @@ class ClassForm(forms.ModelForm):
     class Meta:
         model = Class
         fields = ['student_id', 'course_code', 'class_name', 'class_time', 'room_number', 'max_students']
+        widgets = {
+            'class_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
         
     # Optionally, customize the student_id field to show student IDs
     student_id = forms.ModelChoiceField(queryset=Student.objects.all(), empty_label="Select Student")

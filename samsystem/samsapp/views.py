@@ -40,15 +40,15 @@ def student_update(request, pk):
         form = StudentForm(instance=student)
     return render(request, 'samsapp/student_form.html', {'form': form, 'is_update': True})
 
-        cleaned_data = super().clean()
-        birth_date = cleaned_data.get('birth_date')
-        enrollment_date = cleaned_data.get('enrollment_date')
+        #cleaned_data = super().clean()
+        #birth_date = cleaned_data.get('birth_date')
+        #enrollment_date = cleaned_data.get('enrollment_date')
 
-        if birth_date and enrollment_date:
-            if birth_date == enrollment_date:
-                raise ValidationError("Birth date and enrollment date cannot be the same.")
+        #if birth_date and enrollment_date:
+            #if birth_date == enrollment_date:
+               # raise ValidationError("Birth date and enrollment date cannot be the same.")
         
-        return cleaned_data
+        #return cleaned_data
 @login_required(login_url='login')
 def student_delete(request, pk):
     student = get_object_or_404(Student, pk=pk)
