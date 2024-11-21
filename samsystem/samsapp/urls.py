@@ -20,6 +20,7 @@ urlpatterns = [
     path('users/delete/<int:user_id>/', views.user_delete, name='user_delete'),
     path('login/', views.login_view, name='login'),  # Add this line
     path('logout/', views.logout_view, name='logout'),
+    path('manage-notifications/', views.manage_notifications, name='manage_notifications'),
 
 ]
     

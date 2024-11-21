@@ -24,4 +24,19 @@ class Class(models.Model):
 
     def __str__(self):
         return f'{self.class_name} - {self.course_code}'
+    
+class ClassList(models.Model):
+    name = models.CharField(max_length=100)
+    # Add other fields as needed
+
+    def __str__(self):
+        return self.name
+    
+
+class Notification(models.Model):
+    message = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.message
 

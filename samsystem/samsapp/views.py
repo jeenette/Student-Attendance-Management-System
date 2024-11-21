@@ -9,6 +9,8 @@ from .models import Class, Student
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from .forms import UserRegistrationForm, UserUpdateForm, StudentForm, ClassForm, LoginForm
+from .models import Notification, ClassList
+
 
 # Use the login_required decorator for views that require login
 @login_required(login_url='login')
@@ -185,3 +187,9 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+
+@login_required(login_url='login')
+def manage_notifications(request):
+    notifications = Notification.objects.all().order_by('-created_at')
+    return render(request, 'samsapp/manage_notifications.html', {'notifications': notifications})
