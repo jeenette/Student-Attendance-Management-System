@@ -119,14 +119,14 @@ def student_update(request, pk):
         form = StudentForm(instance=student)
     return render(request, 'samsapp/student_list.html', {'form': form, 'is_update': True})
 
-@login_required(login_url='login')
-def student_delete(request, pk):
-    student = get_object_or_404(Student, pk=pk)
-    if request.method == "POST":
-        student.delete()
-        messages.success(request, 'Student deleted successfully.')
-        return redirect('student_list')
-    return render(request, 'samsapp/student_list.html')
+# @login_required(login_url='login')
+# def student_delete(request, pk):
+#     student = get_object_or_404(Student, pk=pk)
+#     if request.method == "POST":
+#         student.delete()
+#         messages.success(request, 'Student deleted successfully.')
+#         return redirect('student_list')
+#     return render(request, 'samsapp/student_list.html')
 
         #cleaned_data = super().clean()
         #birth_date = cleaned_data.get('birth_date')
@@ -325,5 +325,6 @@ def logout_view(request):
 
 @login_required(login_url='login')
 def manage_notifications(request):
+    # Fetch all notifications ordered by the time they were created
     notifications = Notification.objects.all().order_by('-created_at')
     return render(request, 'samsapp/manage_notifications.html', {'notifications': notifications})

@@ -5,4 +5,4 @@ class SamsappConfig(AppConfig):
     name = 'samsapp'
 
     def ready(self):
-        import samsapp.signals  # Ensure signals are registered
+        import samsapp.signals
