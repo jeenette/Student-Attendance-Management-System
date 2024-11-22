@@ -13,11 +13,13 @@ from .models import Notification, ClassList
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
-from django.contrib import messages
-from django.shortcuts import get_object_or_404
 from .models import Student
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from django.http import HttpResponseRedirect
+from django.contrib.auth.hashers import make_password
+from django.urls import reverse
+from django.http import HttpResponseForbidden
 
 from .forms import AttendanceForm
 from .models import Attendance
@@ -117,7 +119,7 @@ def student_update(request, pk):
             return redirect('student_list')
     else:
         form = StudentForm(instance=student)
-    return render(request, 'samsapp/student_list.html', {'form': form, 'is_update': True})
+    return render(request, 'samsapp/student_form.html', {'form': form, 'is_update': True})
 
 # @login_required(login_url='login')
 # def student_delete(request, pk):
@@ -274,9 +276,16 @@ def register(request):
         form = UserRegistrationForm()
     return render(request, 'samsapp/register.html', {'form': form})
 
-@login_required(login_url='login')
+@login_required(login_url='login')  # Redirects to login if the user is not logged in
 def user_list(request):
+    # Check if the user is an admin (staff member)
+    if not request.user.is_staff:  # Alternatively, you can check request.user.is_superuser
+        return HttpResponseForbidden("You are not authorized to view this page.")
+
+    # Fetch all users
     users = User.objects.all()
+
+    # Render the user list template
     return render(request, 'samsapp/user_list.html', {'users': users})
 
 @login_required(login_url='login')
@@ -312,7 +321,7 @@ def login_view(request):
                 login(request, user)
                 next_url = request.POST.get('next')  # Get the 'next' parameter
                 if not next_url:  # If 'next' is empty, fallback to user_list
-                    next_url = 'user_list'  # Ensure this view is defined in your urlpatterns
+                    next_url = 'class_list'  # Ensure this view is defined in your urlpatterns
                 return redirect(next_url)
     else:
         form = LoginForm()
@@ -325,6 +334,55 @@ def logout_view(request):
 
 @login_required(login_url='login')
 def manage_notifications(request):
-    # Fetch all notifications ordered by the time they were created
+    # Fetch all notifications ordered by creation time
     notifications = Notification.objects.all().order_by('-created_at')
-    return render(request, 'samsapp/manage_notifications.html', {'notifications': notifications})
+
+    # Count unread notifications for the badge
+    unread_count = notifications.filter(is_read=False).count()
+
+    return render(request, 'samsapp/manage_notifications.html', {
+        'notifications': notifications,
+        'unread_count': unread_count
+    })
+
+@login_required(login_url='login')
+def mark_as_read(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id)
+    if not notification.is_read:
+        notification.is_read = True
+        notification.save()
+    return redirect('manage_notifications')
+
+@login_required(login_url='login')
+def class_list(request):
+    classes = Class.objects.all()
+    unread_count = Notification.objects.filter(is_read=False).count()
+    return render(request, 'samsapp/class_list.html', {'classes': classes, 'unread_count': unread_count})
+
+
+def password_recovery(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if not username or not email or not new_password or not confirm_password:
+            messages.error(request, "All fields are required.")
+            return render(request, "password_recovery.html")
+
+        if new_password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return render(request, "password_recovery.html")
+
+        try:
+            user = User.objects.get(username=username, email=email)
+            user.password = make_password(new_password)
+            user.save()
+            messages.success(request, "Password successfully reset. You can now log in.")
+            return HttpResponseRedirect(reverse("login"))
+        except User.DoesNotExist:
+            messages.error(request, "User with the provided username and email does not exist.")
+            return render(request, "password_recovery.html")
+
+    return render(request, "samsapp/password_recovery.html")
