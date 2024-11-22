@@ -5,18 +5,92 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
-from .models import Class, Student
+from .models import Class
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from .forms import UserRegistrationForm, UserUpdateForm, StudentForm, ClassForm, LoginForm
 from .models import Notification, ClassList
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from django.http import HttpResponse
+from django.contrib import messages
+from django.shortcuts import get_object_or_404
+from .models import Student
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+
+from .forms import AttendanceForm
+from .models import Attendance
+
+@login_required(login_url='login')
+def mark_attendance(request, student_id, class_id):
+    try:
+        student = Student.objects.get(id=student_id)
+        class_instance = Class.objects.get(id=class_id)
+        attendance, created = Attendance.objects.get_or_create(
+            student=student,
+            class_name=class_instance,
+            date=request.POST.get('date', None),
+        )
+        
+        if request.method == "POST":
+            form = AttendanceForm(request.POST)
+            if form.is_valid():
+                attendance.status = form.cleaned_data.get('status', 'A')  # default to 'Absent'
+                attendance.save()
+                messages.success(request, 'Attendance marked successfully!')
+                return redirect('class_list')  # Or whichever view makes sense
+            else:
+                messages.error(request, 'There was an error marking attendance. Please try again.')
+                return render(request, 'attendance/mark.html', {'form': form, 'attendance': attendance})
+
+        else:
+            form = AttendanceForm()  # Display empty form if it's GET request
+
+        return render(request, 'attendance/mark.html', {'form': form, 'attendance': attendance})
+
+    except Student.DoesNotExist:
+        messages.error(request, "Student not found.")
+        return redirect('student_list')  # Adjust as needed
+    except Class.DoesNotExist:
+        messages.error(request, "Class not found.")
+        return redirect('class_list')  # Adjust as needed
+    except Exception as e:
+        messages.error(request, f"Error: {str(e)}")
+        return redirect('class_list')  # Adjust as needed
+
+
+
+@login_required(login_url='login')
+def home(request):
+    user = request.user
+    notifications = Notification.objects.filter(user=user).order_by('-created_at')[:5]  # Show last 5 notifications
+    
+    context = {
+        'user': user,
+        'notifications': notifications,
+        'total_notifications': notifications.count(),
+    }
+
+    return render(request, 'home.html', context)
 
 
 # Use the login_required decorator for views that require login
 @login_required(login_url='login')
 def student_list(request):
     students = Student.objects.all()
-    return render(request, 'samsapp/student_list.html', {'students': students})
+    
+    # Handle form submission for adding a new student
+    if request.method == "POST":
+        form = StudentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('student_list')  # After saving, redirect to the same page to refresh the student list
+    else:
+        form = StudentForm()
+
+    # Render the student list along with the form
+    return render(request, 'samsapp/student_list.html', {'students': students, 'form': form})
 
 @login_required(login_url='login')
 def student_create(request):
@@ -24,10 +98,13 @@ def student_create(request):
         form = StudentForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('student_list')
+            return redirect('student_create')  # After saving, redirect to student list
     else:
         form = StudentForm()
-    return render(request, 'samsapp/student_form.html', {'form': form})
+
+    # Render the student list along with the form
+    return render(request, 'samsapp/student_list.html', {'form': form})
+
 
 @login_required(login_url='login')
 def student_update(request, pk):
@@ -40,7 +117,16 @@ def student_update(request, pk):
             return redirect('student_list')
     else:
         form = StudentForm(instance=student)
-    return render(request, 'samsapp/student_form.html', {'form': form, 'is_update': True})
+    return render(request, 'samsapp/student_list.html', {'form': form, 'is_update': True})
+
+@login_required(login_url='login')
+def student_delete(request, pk):
+    student = get_object_or_404(Student, pk=pk)
+    if request.method == "POST":
+        student.delete()
+        messages.success(request, 'Student deleted successfully.')
+        return redirect('student_list')
+    return render(request, 'samsapp/student_list.html')
 
         #cleaned_data = super().clean()
         #birth_date = cleaned_data.get('birth_date')
@@ -51,6 +137,7 @@ def student_update(request, pk):
                # raise ValidationError("Birth date and enrollment date cannot be the same.")
         
         #return cleaned_data
+
 @login_required(login_url='login')
 def student_delete(request, pk):
     student = get_object_or_404(Student, pk=pk)
@@ -63,30 +150,77 @@ def student_delete(request, pk):
 @login_required(login_url='login')
 def student_report(request, pk):
     try:
-        # Get the specific student by ID
         student = get_object_or_404(Student, pk=pk)
-        
-        # Create the HTTP response with CSV content type
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="student_report_{student.student_id}.csv"'
 
-        writer = csv.writer(response)
-        # Add the header row including Student ID
-        writer.writerow(['Student ID', 'Name', 'Email', 'Birth Date', 'Enrollment Date'])
+        # Create a response object for PDF
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="student_report_{student.student_id}.pdf"'
 
-        # Write the specific student's data to the CSV, including Student ID
-        writer.writerow([
-            student.student_id,  # Include the Student ID here
-            student.student_fullname or '',
-            student.student_email or '',
-            student.birth_date or '',
-            student.enrollment_date or ''
+        # Create a PDF document with the given filename
+        doc = SimpleDocTemplate(response, pagesize=letter)
+
+        # Create data for the table (headers and student info)
+        data = [
+            ['Student ID', 'Name', 'Email', 'Birth Date', 'Enrollment Date'],
+            [
+                student.student_id,
+                student.student_fullname or '',
+                student.student_email or '',
+                student.birth_date or '',
+                student.enrollment_date or ''
+            ]
+        ]
+
+        # Create a table with the data
+        table = Table(data)
+
+        # Apply some styling to the table
+        style = TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Header row background
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),  # Header text color
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Center align all cells
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Header font
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),  # Padding for header
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),  # Body row background
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Add gridlines
         ])
+        
+        # Apply style to the table
+        table.setStyle(style)
+
+        # Build the PDF document with the table
+        elements = [table]
+        doc.build(elements)
 
         return response
+
     except Exception as e:
         print(f"Error generating report: {e}")
         return HttpResponse("Error generating report.", status=500)
+
+# @login_required(login_url='login')
+
+# def student_report(request, pk):
+#     try:
+#         student = get_object_or_404(Student, pk=pk)
+#         response = HttpResponse(content_type='text/csv')
+#         response['Content-Disposition'] = f'attachment; filename="student_report_{student.student_id}.csv"'
+
+#         writer = csv.writer(response)
+#         writer.writerow(['Student ID', 'Name', 'Email', 'Birth Date', 'Enrollment Date'])
+
+#         writer.writerow([
+#             student.student_id,
+#             student.student_fullname or '',
+#             student.student_email or '',
+#             student.birth_date or '',
+#             student.enrollment_date or ''
+#         ])
+
+#         return response
+#     except Exception as e:
+#         print(f"Error generating report: {e}")
+#         return HttpResponse("Error generating report.", status=500)
     
 def some_view(request):
     return HttpResponse("Hello, this is the Ephan view!")

@@ -3,6 +3,8 @@ from .models import Student
 from .models import Class
 from django.contrib.auth.models import User
 
+from .models import Attendance
+
 
 
 class StudentForm(forms.ModelForm):
@@ -45,3 +47,13 @@ class UserUpdateForm(forms.ModelForm):
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=150)
     password = forms.CharField(widget=forms.PasswordInput)
+
+class AttendanceForm(forms.ModelForm):
+    class Meta:
+        model = Attendance
+        fields = ['student', 'class_name', 'status']
+        widgets = {
+            'student': forms.Select(attrs={'class': 'form-control'}),
+            'class_name': forms.Select(attrs={'class': 'form-control'}),
+            'status': forms.Select(attrs={'class': 'form-control'}),
+        }

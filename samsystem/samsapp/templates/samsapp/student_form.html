@@ -6,14 +6,91 @@
     <title>{% if is_update %}Update Student{% else %}Add New Student{% endif %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .card-header h2 {
-            margin: 0; /* Remove default margin for proper centering */
-            margin: 0;
+        /* General body styling */
+        body {
+            background-color: #E6F5FA; /* Light background for the page */
+            font-family: 'Arial', sans-serif;
         }
+
+        /* Container for form */
+        .container {
+            margin-top: 50px;
+        }
+
+        /* Card header styling */
+        .card-header {
+            background-color: white; /* Deep blue */
+            color: black    ;
+        }
+
+        /* Card body styling */
+        .card-body {
+            background-color:white; /* Light blue for card body */
+            border-radius: 8px;
+        }
+
+        /* Button styling */
+        .btn-success {
+            background-color: #193948; /* Dark blue for button */
+            border: none;
+        }
+
+        .btn-success:hover {
+            background-color: #1e4b64; /* Slightly lighter on hover */
+        }
+
+        .btn-secondary {
+            background-color: #A0BFD1; /* Light blue for secondary button */
+            color: black;
+        }
+
+        .btn-secondary:hover {
+            background-color: #C2D6E6; /* Slightly darker hover effect */
+        }
+
+        /* Logout button styling */
         .logout-btn {
             position: absolute;
             top: 15px;
             right: 15px;
+            background-color: #193948;
+            color: white;
+        }
+
+        .logout-btn:hover {
+            background-color: #1e4b64;
+        }
+
+        /* Form label and input field styling */
+        .form-label {
+            font-weight: bold;
+        }
+
+        .form-control {
+            background-color: #A0BFD1; /* Blueish fields */
+            border: 1px solid #01377D; /* Deep blue border */
+            border-radius: 8px;
+        }
+
+        .form-control:focus {
+            border-color: #193948; /* Focused state */
+            box-shadow: 0 0 5px rgba(25, 57, 72, 0.3);
+        }
+
+        /* Error messages */
+        .text-danger {
+            color: #D9534F;
+        }
+
+        /* Text alignment and button position */
+        .card-header h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        /* Centered form button container */
+        .text-center {
+            margin-top: 20px;
         }
     </style>
     <script>
@@ -25,14 +102,14 @@
         });
     </script>
 </head>
-<body class="bg-light">
+<body>
 
-<div class="container mt-5">
+<div class="container">
     <!-- Logout Button -->
-    <a href="{% url 'logout' %}" class="btn btn-danger logout-btn">Logout</a>
+    <a href="{% url 'logout' %}" class="btn logout-btn">Logout</a>
 
     <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white text-center">
+        <div class="card-header text-center">
             <h2>{{ is_update|yesno:"Update Student,Add New Student" }}</h2>
         </div>
         <div class="card-body">
@@ -94,9 +171,9 @@
                     </div>
                 </div>
                 
-                <div class="text-center mt-4">
+                <div class="text-center">
                     <button type="submit" class="btn btn-success">{% if is_update %}Update{% else %}Save{% endif %}</button>
-                    <a href="{% url 'student_list' %}" class="btn btn-secondary">Back to Student List</a>
+                    <a href="{% url 'student_list' %}" class="btn btn-secondary" onclick="return confirm('Do you want to cancel and go back to the student list?');">Cancel</a>
                 </div>
             </form>
         </div>

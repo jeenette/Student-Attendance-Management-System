@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('ephan/', views.some_view, name='ephan'),
+   path('', views.home, name='home'),
     path('student/new/', views.student_create, name='student_create'),
     path('student/edit/<int:pk>/', views.student_update, name='student_update'),
     path('student/delete/<int:pk>/', views.student_delete, name='student_delete'),
@@ -21,6 +22,6 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),  # Add this line
     path('logout/', views.logout_view, name='logout'),
     path('manage-notifications/', views.manage_notifications, name='manage_notifications'),
-
+ path('attendance/mark/<int:student_id>/<int:class_id>/', views.mark_attendance, name='mark_attendance'),
 ]
     
