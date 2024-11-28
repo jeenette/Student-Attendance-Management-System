@@ -166,9 +166,13 @@
 <!-- Sidebar Navigation -->
 <div class="sidebar">
     <a href="{% url 'student_list' %}">Student List</a>
-    <a href="{% url 'user_list' %}" class="active">User List</a>
+    {% if user.is_staff %}
+        <a href="{% url 'user_list' %}" class="active">User List</a>
+    {% endif %}
+    <a href="{% url 'assign_student' %}">Assign Student</a>
     <a href="{% url 'logout' %}">Logout</a>
 </div>
+
 
 <!-- Notification Icon -->
 <div class="notification-icon">

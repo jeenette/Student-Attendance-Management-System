@@ -276,17 +276,16 @@ def register(request):
         form = UserRegistrationForm()
     return render(request, 'samsapp/register.html', {'form': form})
 
-@login_required(login_url='login')  # Redirects to login if the user is not logged in
+@login_required(login_url='login')
+@login_required(login_url='login')
 def user_list(request):
-    # Check if the user is an admin (staff member)
-    if not request.user.is_staff:  # Alternatively, you can check request.user.is_superuser
-        return HttpResponseForbidden("You are not authorized to view this page.")
-
-    # Fetch all users
-    users = User.objects.all()
-
-    # Render the user list template
+    if request.user.is_staff:
+        users = User.objects.all()
+    else:
+        users = User.objects.values('username', 'email')  # Only expose username and email
     return render(request, 'samsapp/user_list.html', {'users': users})
+
+
 
 @login_required(login_url='login')
 def user_update(request, user_id):
@@ -386,3 +385,18 @@ def password_recovery(request):
             return render(request, "password_recovery.html")
 
     return render(request, "samsapp/password_recovery.html")
+
+
+
+@login_required(login_url='login')
+def assign_student(request):
+    if request.method == "POST":
+        student_id = request.POST.get('student_id')
+        class_id = request.POST.get('class_id')
+        student = Student.objects.get(student_id=student_id)
+        selected_class = Class.objects.get(id=class_id)
+        student.enrolled_classes.add(selected_class)
+        return redirect('class_list')  # Redirect to a class list or success page
+    classes = Class.objects.all()
+    students = Student.objects.all()
+    return render(request, 'samsapp/assign_student.html', {'students': students, 'classes': classes})

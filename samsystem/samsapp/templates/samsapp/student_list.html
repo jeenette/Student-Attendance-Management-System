@@ -276,6 +276,9 @@
         <!-- <a href="{% url 'home' %}">Home</a> -->
         <!-- <a href="{% url 'student_create' %}">Add New Student</a> -->
         <a href="{% url 'student_list' %}">Student List</a>
+        {% if user.is_staff %}
+        <a href="{% url 'user_list' %}" class="active">User List</a>
+    {% endif %}
         <a href="{% url 'class_list' %}">Class List</a>
         <a href="{% url 'logout' %}">Logout</a>
     </div>
