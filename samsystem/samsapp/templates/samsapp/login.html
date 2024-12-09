@@ -4,22 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Login</title>
+    <title>Admin Login</title>
     <style>
+        /* General Styles */
         body {
-            background: linear-gradient(to right, blue, #2575fc); /* Gradient background */
-            min-height: 100vh; /* Full viewport height */
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-family: Arial, sans-serif;
+            background-color: #f4f9fc;
             margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-        
+
         .container {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 100%;
             height: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .left-section {
+            background-color: #009DD0;
+            color: white;
+            width: 50%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .left-section .avatar img {
+            width: 100px;
+            border-radius: 50%;
+        }
+
+        .right-section {
+            background-color: #e6f1f8;
+            width: 50%;
+            padding: 30px;
+        }
+
+        .right-section h2 {
+            color: #003b5c;
+        }
+
+        .right-section p {
+            font-size: 0.9rem;
+            color: #666;
         }
 
         .card {
@@ -35,7 +70,7 @@
         }
 
         h2 {
-            color: #333;
+            color: #003b5c;
             text-align: center;
             margin-bottom: 1.5rem;
         }
@@ -58,20 +93,20 @@
         }
 
         .btn-primary {
-            background-color: #6a11cb;
-            border-color: #6a11cb;
+            background-color: #009DD0;
+            border-color: #009DD0;
             padding: 10px;
             font-size: 1rem;
             border-radius: 8px;
         }
 
         .btn-primary:hover {
-            background-color: #2575fc;
-            border-color: #2575fc;
+            background-color: #0078a1;
+            border-color: #0078a1;
         }
 
         .login-footer a {
-            color: #6a11cb;
+            color: #003b5c;
         }
 
         .login-footer a:hover {
@@ -82,52 +117,67 @@
         .alert {
             border-radius: 8px;
         }
-
-        .container {
-            max-width: 600px;
-            margin-top: 50px;
+        a{
+            text-decoration: none;
         }
+
+    
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="card mx-auto">
-            <div class="card-body">
-                <h2>Login</h2>
-                
-                <!-- Error Messages -->
-                {% if form.errors %}
-                    <div class="alert alert-danger">
-                        <strong>Please correct the following errors:</strong>
-                        <ul>
-                            {% for field in form %}
-                                {% for error in field.errors %}
-                                    <li>{{ field.label }}: {{ error }}</li>
-                                {% endfor %}
-                            {% endfor %}
-                            {% for error in form.non_field_errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
-
-                <!-- Login Form -->
-                <form method="post">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <input type="hidden" name="next" value="{{ request.GET.next|default:'' }}">
-                    <div class="text-center mb-3">
-                        <button type="submit" class="btn btn-primary w-100">Login</button>
-                    </div>
-                    <p class="text-center login-footer">
-                        Don't have an account? <a href="{% url 'register' %}">Register here</a>
-                    </p>
-                    <p class="text-center login-footer">
-                        Forgot your password? <a href="{% url 'password_recovery' %}">Recover it here</a>
-                    </p>
-                </form>
+        <div class="left-section">
+            <div class="avatar">
+                <!-- Make sure the path here is correct -->
+                <img src="https://png.pngtree.com/png-vector/20221126/ourmid/pngtree-attendance-management-blue-gradient-concept-icon-system-productivity-business-vector-png-image_42525028.jpg" alt="User Avatar">
             </div>
+            <h3>Admin Login System</h3>
+        </div>
+        <div class="right-section">
+            <h2>Login to Your Account</h2>
+            <p>Enter your credentials to access the system</p>
+            
+            <!-- Error Messages -->
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Please correct the following errors:</strong>
+                <ul>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <!-- Login Form -->
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="username" id="username" name="username" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+
+                <div class="text-center mb-3">
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </div>
+
+                <p class="text-center login-footer">
+                   <a href="{% url 'register' %}"> Don't have an account? </a>
+                </p>
+                <p class="text-center login-footer">
+                    <a href="{% url 'password_recovery' %}">Forgot your password? </a>
+                </p>
+            </form>
         </div>
     </div>
 

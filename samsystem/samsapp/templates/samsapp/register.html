@@ -7,41 +7,61 @@
     <title>Register</title>
     <style>
         body {
-            background: linear-gradient(to right, #ff7e5f, #feb47b); /* Gradient background */
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-family: Arial, sans-serif;
             margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f9fc;
         }
-        
+
         .container {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-        }
-
-        .card {
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
             width: 100%;
-            border: none;
+            height: 100%;
+            border-radius: 10px;
+            overflow: hidden;
         }
 
-        .card-body {
-            padding: 2rem;
+        .left-section {
+            background-color: #009DD0;
+            color: white;
+            width: 50%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        h2 {
-            color: #333;
+        .left-section .avatar img {
+            width: 100px;
+            border-radius: 50%;
+        }
+        .avatar img {
+          width: 500px;
+          border-radius: 50%;
+        }
+        .right-section {
+            background-color: #e6f1f8;
+            width: 50%;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .right-section h2 {
+            color: #003b5c;
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 20px;
         }
 
         .form-label {
             font-weight: bold;
+            color: #003b5c;
         }
 
         .form-control {
@@ -49,64 +69,77 @@
             padding: 10px;
             font-size: 1rem;
             border-color: #ced4da;
-            box-shadow: none;
         }
 
         .form-control:focus {
-            border-color: #ff7e5f;
-            box-shadow: 0 0 0 0.25rem rgba(255, 126, 95, 0.25);
+            border-color: #009DD0;
+            box-shadow: 0 0 0 0.25rem rgba(0, 157, 208, 0.25);
         }
 
         .btn-primary {
-            background-color: #ff7e5f;
-            border-color: #ff7e5f;
+            background-color: #009DD0;
+            border-color: #009DD0;
             padding: 10px;
             font-size: 1rem;
             border-radius: 8px;
         }
 
         .btn-primary:hover {
-            background-color: #feb47b;
-            border-color: #feb47b;
+            background-color: #0078a1;
+            border-color: #0078a1;
         }
 
         .register-footer a {
-            color: #ff7e5f;
+            color: #009DD0;
         }
 
         .register-footer a:hover {
-            color: #feb47b;
+            color: #0078a1;
             text-decoration: underline;
         }
-
-        .alert {
-            border-radius: 8px;
-        }
-
-        .container {
-            max-width: 600px;
-            margin-top: 50px;
+        a{
+            text-decoration: none;
         }
     </style>
+    {% load static %}
 </head>
 <body>
     <div class="container">
-        <div class="card mx-auto">
-            <div class="card-body">
-                <h2>Create an Account</h2>
-
-                <!-- Registration Form -->
-                <form method="post">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <div class="text-center mb-3">
-                        <button type="submit" class="btn btn-primary w-100">Register</button>
-                    </div>
-                    <p class="text-center register-footer">
-                        Already have an account? <a href="{% url 'login' %}">Login here</a>
-                    </p>
-                </form>
+        <!-- Left Section -->
+        <div class="left-section">
+            <div class="avatar">
+                <!-- Make sure the path here is correct -->
+                <img src="https://png.pngtree.com/png-vector/20221126/ourmid/pngtree-attendance-management-blue-gradient-concept-icon-system-productivity-business-vector-png-image_42525028.jpg" alt="User Avatar">
             </div>
+            <h3>Admin Registration System</h3>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section">
+            <h2>Create an Account</h2>
+
+            <!-- Registration Form -->
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="id_full_name" class="form-label">Username</label>
+                    <input type="text" name="username" id="id_full_name" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="id_email" class="form-label">Email</label>
+                    <input type="email" name="email" id="id_email" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="id_password" class="form-label">Password</label>
+                    <input type="password" name="password" id="id_password" class="form-control" required>
+                </div>
+                <div class="text-center mb-3">
+                    <button type="submit" class="btn btn-primary w-100">Register</button>
+                </div>
+                <p class="text-center register-footer">
+                    Already have an account? <a href="{% url 'login' %}">Login here</a>
+                </p>
+            </form>
         </div>
     </div>
 
