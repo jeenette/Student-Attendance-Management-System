@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            background-color: #009DD0; /* Updated header color */
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .search-bar input {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #01377D; /* Updated border color */
+            width: 200px;
+            font-size: 1rem;
+        }
+
+        .search-bar button {
+            background-color: #01377D; /* Updated button color */
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            margin-left: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .search-bar button:hover {
+            background-color: #007b8d; /* Hover color update */
+        }
+
+        .header-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-buttons button {
+            background-color: #009DD0; /* Updated button color */
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .header-buttons button:hover {
+            background-color: #007b8d;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            border-bottom: 1px solid #009DD0; /* Updated border color */
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #009DD0; /* Updated hover color */
+            padding-left: 20px; /* Smooth sliding effect on hover */
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            color: #01377D; /* Updated section header color */
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .section p {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .section table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .section table, .section th, .section td {
+            border: 1px solid #ddd;
+        }
+
+        .section th, .section td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        .section th {
+            background-color: #009DD0; /* Updated table header color */
+            color: white;
+        }
+
+        .section td {
+            background-color: #f1f1f1;
+        }
+
+        .status-present {
+            background-color: #008000; /* Green color for present */
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .status-late {
+            background-color: #ff9800;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .status-absent {
+            background-color: #f44336;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .profile-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .profile-info .info-box {
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            margin-right: 20px;
+            display: flex;
+            align-items: center; /* Aligns items vertically in the center */
+            gap: 10px; /* Space between the icon and text */
+        }
+
+        .profile-info .info-box i {
+            font-size: 3rem;
+            color: #009DD0; /* Updated icon color */
+        }
+
+        .profile-info .info-box p {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .profile-info .info-box h3 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #009DD0; /* Updated number color */
+            margin-left: auto;
+        }
+
+        footer {
+            background-color: #000000; /* Updated footer color */
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo {
+            width: 60px; /* Adjust size as needed */
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid white;
+            background-color: #fff;
+            object-fit: cover;
+        }
+
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-image: url('https://png.pngtree.com/png-vector/20240724/ourlarge/pngtree-administrator-admin-avatar-png-image_12853668.png');
+            background-size: cover;
+            background-position: center;
+            border: 2px solid white;
+            cursor: pointer;
+            margin-left: 15px;
+            margin-right: 20px;
+        }
+
+        .container {
+            margin-left: 250px;
+            padding: 2rem;
+            margin-top: 80px;
+            width: calc(100% - 250px);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: margin-left 0.3s, width 0.3s;
+        }
+
+        .sidebar {
+            background-color: #009DD0; /* Updated sidebar color */
+            color: white;
+            width: 80px;
+            height: 100vh;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            padding-top: 20px;
+            overflow-y: auto;
+            box-sizing: border-box;
+            transition: width 0.3s;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            border-bottom: 1px solid #009DD0; /* Updated border color */
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #007b8d; /* Updated hover color */
+            padding-left: 20px; /* Smooth sliding effect on hover */
+        }
+
+        .sidebar a i {
+            margin-right: 10px; /* Space between icon and text */
+            font-size: 1.3rem;
+        }
+
+        .sidebar a span {
+            display: none;
+            font-size: 1rem;
+        }
+
+        .sidebar a:hover span {
+            display: inline-block; /* Show text on hover */
+        }
+      /* Dropdown menu styles */
+      .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 50px; /* Adjust depending on your header height */
+            right: 0;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            width:150px;
+            z-index: 100;
+            margin-top:25px;
+            margin-right: 25px;
+        }
+
+        .dropdown-menu a {
+            color: #333;
+            padding: 12px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Show the dropdown menu when the profile picture is hovered */
+        .profile-pic:hover + .dropdown-menu,
+        .dropdown-menu:hover {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="Pink Blue Cute Simple Y2k Class Logo.png" alt="SAMS Logo" class="logo">
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search...">
+            <button>Search</button>
+        </div>
+        <div class="header-buttons">
+            <button><i class="fas fa-bell"></i></button>
+            <div class="profile-pic" title="Admin Profile"></div>
+            <!-- Dropdown menu -->
+            <div class="dropdown-menu">
+                <a href="account-settings.html">Account Settings</a>
+                <a href="my-profile.html">My Profile</a>
+                <a href="logout.html">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="sidebar">
+        <a href="home.html"><i class="fas fa-home"></i></a>
+        <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i></a>
+        <a href="teacher-management.html"><i class="fas fa-chalkboard-teacher"></i></a>
+        <a href="attendance-settings.html"><i class="fas fa-cogs"></i></a>
+        <a href="reports.html"><i class="fas fa-chart-line"></i></a>
+        <a href="teacher.html"><i class="fas fa-user-tie"></i></a>
+        <a href="student.html"><i class="fas fa-user-graduate"></i></a>
+        <a href="class.html"><i class="fas fa-school"></i></a>
+        <a href="mark_attendance.html"><i class="fas fa-check-square"></i></a>
+        <a href=""><i class="fas fa-sign-out-alt"></i></a>
+    </div>
+    <div class="container">
+        <section class="section">
+            <h2>Generate Attendance Reports</h2>
+            <form action="/generate-report" method="post">
+                <div class="form-group">
+                    <label for="filter-date">Filter by Date:</label>
+                    <input type="date" id="filter-date" name="filter_date">
+                </div>
+                <div class="form-group">
+                    <label for="filter-class">Filter by Class:</label>
+                    <select id="filter-class" name="filter_class">
+                        <option value="class1">Class 1</option>
+                        <option value="class2">Class 2</option>
+                        <option value="class3">Class 3</option>
+                    </select>
+                </div>
+                <button type="submit">Generate Report</button>
+            </form>
+        </section>
+
+        <section class="section">
+            <h2>Export Reports</h2>
+            <button onclick="window.location.href='/export-report?type=pdf'">Export as PDF</button>
+            <button onclick="window.location.href='/export-report?type=excel'">Export as Excel</button>
+        </section>
+    </div>
+</body>
+</html>
