@@ -388,15 +388,3 @@ def password_recovery(request):
 
 
 
-@login_required(login_url='login')
-def assign_student(request):
-    if request.method == "POST":
-        student_id = request.POST.get('student_id')
-        class_id = request.POST.get('class_id')
-        student = Student.objects.get(student_id=student_id)
-        selected_class = Class.objects.get(id=class_id)
-        student.enrolled_classes.add(selected_class)
-        return redirect('class_list')  # Redirect to a class list or success page
-    classes = Class.objects.all()
-    students = Student.objects.all()
-    return render(request, 'samsapp/assign_student.html', {'students': students, 'classes': classes})
