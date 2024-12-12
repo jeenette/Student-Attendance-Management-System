@@ -24,7 +24,32 @@ from rest_framework.response import Response
 from django.contrib import messages  # For success messages
 from rest_framework.decorators import api_view
 from datetime import datetime
+from django.contrib.auth import update_session_auth_hash
 from django.utils.timezone import now
+
+
+def dashboard(request):
+    # Total students
+    total_students = Student.objects.count()
+
+    # Total classes
+    total_classes = Class.objects.count()
+
+    # Attendance statistics
+    total_present = Attendance.objects.filter(status='Present').count()
+    total_absent = Attendance.objects.filter(status='Absent').count()
+    total_late = Attendance.objects.filter(status='Late').count()
+
+    # Passing data to the template
+    context = {
+        'total_students': total_students,
+        'total_classes': total_classes,
+        'total_present': total_present,
+        'total_absent': total_absent,
+        'total_late': total_late,
+    }
+    return render(request, 'samsapp/dashboard.html', context)
+
 
 # # MARK ATTENDANCE
 # def mark_attendance(request):
@@ -65,7 +90,7 @@ def mark_attendance(request):
 
 def attendance_view(request):
     today_date = now().date()  # Get today's date in YYYY-MM-DD format
-    return render(request, 'your_template.html', {'today_date': today_date})
+    return render(request, 'samsapp/attendance_tracking.html', {'today_date': today_date})
 
 # ATTENDANCE TRACKING
 @login_required(login_url='login')
@@ -97,14 +122,48 @@ def attendance_tracking(request):
 
 
 # ACCOUNT SETTINGS
+@login_required
+
+
 def account_settings(request):
+    user = request.user
+
     if request.method == 'POST':
-        user = request.user
-        user.username = request.POST['username']
-        user.email = request.POST['email']
+        # Get data from form submission
+        username = request.POST.get('username', user.username)
+        email = request.POST.get('email', user.email)
+        current_password = request.POST.get('current_password')  # Current password entered by user
+        new_password = request.POST.get('new_password')  # New password
+        confirm_password = request.POST.get('confirm_password')  # Confirm new password
+
+        # Step 1: Validate the current password
+        if not user.check_password(current_password):  # Check if entered password is correct
+            messages.error(request, "Your current password is incorrect.")
+            return redirect('account_settings')
+
+        # Step 2: Validate the new password and confirmation
+        if new_password and new_password != confirm_password:
+            messages.error(request, "New passwords do not match.")
+            return redirect('account_settings')
+
+        # Step 3: Update user details
+        user.username = username
+        user.email = email
+        
+        # If a new password is provided, update it
+        if new_password:
+            user.set_password(new_password)
+            update_session_auth_hash(request, user)  # Keep the user logged in after password change
+        
         user.save()
-        return redirect('samsapp/account_settings.html')
-    
+
+        messages.success(request, "Account settings updated successfully.")
+        return redirect('account_settings')
+
+    # If method is GET, render the account settings page
+    return render(request, 'samsapp/account-settings.html', {
+        'user': user,
+    })
 
 # HOME
 @login_required(login_url='login')

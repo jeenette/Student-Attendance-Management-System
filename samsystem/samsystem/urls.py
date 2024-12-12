@@ -59,7 +59,7 @@ urlpatterns = [
     path('account/settings/', views.account_settings, name='account_settings'),
   
 
-path('mark-attendance/', views.mark_attendance, name='mark_attendance'),
-   
+    path('mark-attendance/', views.mark_attendance, name='mark_attendance'),
+    path('dashboard/', views.dashboard, name='dashboard'),
 ]
 

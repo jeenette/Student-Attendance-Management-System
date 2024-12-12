@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            background-color: #009DD0;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .search-bar input {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #01377D;
+            width: 200px;
+            font-size: 1rem;
+        }
+
+        .search-bar button {
+            background-color: #01377D;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            margin-left: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .search-bar button:hover {
+            background-color: #007b8d;
+        }
+
+        .header-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-buttons button {
+            background-color: #009DD0;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .header-buttons button:hover {
+            background-color: #007b8d;
+        }
+
+        /* Profile Picture */
+        .profile-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-image: url('https://png.pngtree.com/png-vector/20240724/ourlarge/pngtree-administrator-admin-avatar-png-image_12853668.png');
+            background-size: cover;
+            background-position: center;
+            border: 2px solid white;
+            cursor: pointer;
+        }
+
+        .sidebar {
+            background-color: #009DD0;
+            color: white;
+            width: 80px;
+            height: 100vh;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            padding-top: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            border-bottom: 1px solid #009DD0;
+            font-size: 1.1rem;
+        }
+
+        .sidebar a:hover {
+            background-color: #007b8d;
+            padding-left: 20px;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+        }
+
+        .container {
+            margin-left: 10px;
+            padding: 2rem;
+            margin-top: 80px;
+            width: calc(100% - 80px);
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 15px;
+            width: 250px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            color: #009DD0;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0;
+            color: #333;
+        }
+
+        .card i {
+            font-size: 3rem;
+            color: #009DD0;
+            margin-bottom: 10px;
+        }
+       
+  
+
+        .student-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-image: url('https://www.w3schools.com/w3images/avatar2.png');
+            background-size: cover;
+            background-position: center;
+            margin-right: 10px;
+        }
+
+
+
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid white;
+            background-color: #fff;
+            object-fit: cover;
+        }
+
+        /* Dropdown menu styles */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            width: 150px;
+            z-index: 100;
+        }
+
+        .dropdown-menu a {
+            color: #333;
+            padding: 12px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .profile-pic:hover + .dropdown-menu,
+        .dropdown-menu:hover {
+            display: block;
+        }
+
+
+        .container {
+            margin-top: 80px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 15px;
+            width: 250px;
+            text-align: center;
+            transition: transform 0.2s;
+            text-decoration: none;
+        }
+        a{
+         text-decoration: none;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            color: #009DD0;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0;
+            color: #333;
+        }
+
+        .card i {
+            font-size: 3rem;
+            color: #009DD0;
+            margin-bottom: 10px;
+        }
+
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .container {
+                width: 100%;
+                height: auto;
+            }
+         }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="https://png.pngtree.com/png-vector/20221126/ourmid/pngtree-attendance-management-blue-gradient-concept-icon-system-productivity-business-vector-png-image_42525028.jpg" alt="SAMS Logo" class="logo">
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search...">
+            <button>Search</button>
+        </div>
+        <div class="header-buttons">
+            <button><i class="fas fa-bell"></i></button>
+            <div class="profile-pic" title="Admin Profile"></div>
+            <div class="dropdown-menu">
+               <a href="{% url 'account_settings' %}">Account Settings</a>
+                <a href="my-profile.html">My Profile</a>
+                <a href="logout.html">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="sidebar">
+        <a href="{% url 'home' %}"><i class="fas fa-home"></i></a>
+        <a href="{% url 'dashboard' %}"><i class="fas fa-tachometer-alt"></i></a>
+        <!-- <a href="teacher-management.html"><i class="fas fa-chalkboard-teacher"></i></a>
+        <a href="attendance-settings.html"><i class="fas fa-cogs"></i></a>
+        <a href="reports.html"><i class="fas fa-chart-line"></i></a>
+        <a href="teacher.html"><i class="fas fa-user-tie"></i></a> -->
+        <a href="{% url 'class_list' %}"><i class="fas fa-school"></i></a>
+        <a href="{% url 'mark_attendance' %}"><i class="fas fa-check-square"></i></a>
+        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i></a>
+    </div>
+  
+    <div class="container">
+      <div class="card">
+         <a href="{% url 'student_list' %}">
+             <i class="fas fa-user-graduate"></i>
+             <h3>Total Students</h3>
+             <p>{{ total_students }}</p>
+         </a>
+     </div>
+     
+     <div class="card">
+         <a href="{% url 'class_list' %}">
+             <i class="fas fa-chalkboard"></i>
+             <h3>Total Classes</h3>
+             <p>{{ total_classes }}</p>
+         </a>
+     </div>
+     
+     
+      <div class="card">
+          <i class="fas fa-check-circle"></i>
+          <h3>Present</h3>
+          <p>{{ total_present }}</p>
+      </div>
+      <div class="card">
+          <i class="fas fa-times-circle"></i>
+          <h3>Absent</h3>
+          <p>{{ total_absent }}</p>
+      </div>
+      <div class="card">
+          <i class="fas fa-clock"></i>
+          <h3>Late</h3>
+          <p>{{ total_late }}</p>
+      </div>
+  
+      <div class="browser-tab-container">
+         <div class="browser-tab">
+            <span class="tab-title">Attendance Statistics</span>
+            <div class="tab-controls">
+               <button class="control-btn" id="minimizeBtn">-</button>
+               <button class="control-btn" id="maximizeBtn">□</button>
+               <button class="control-btn close-btn" id="closeBtn">×</button>
+            </div>
+         </div>
+         <div class="card" id="chartCard">
+            <div class="card-body">
+               <canvas id="studentChart" aria-expanded="true"></canvas>
+            </div>
+         </div>
+      </div>
+      
+      <style>
+         /* Container and styles remain the same */
+         .browser-tab-container {
+            margin: 20px auto;
+            max-width: 100%;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            transition: all 0.3s ease-in-out;
+         }
+         .browser-tab {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 15px;
+         }
+         .tab-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+         }
+         .tab-controls {
+            display: flex;
+            gap: 8px;
+         }
+         .control-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #888;
+            cursor: pointer;
+         }
+         .control-btn:hover {
+            color: #555;
+         }
+         .close-btn:hover {
+            color: #e74c3c;
+         }
+         #chartCard {
+            padding: 60px;
+            background: #f9f9f9;
+            border-radius: 0 0 8px 8px;
+            transition: all 0.3s ease-in-out;
+            resize: both; /* Enable resizing */
+            overflow: auto; /* Ensure overflow is handled when resizing */
+            min-width: 300px; /* Minimum width for the card */
+            max-width: 100%; /* Maximum width to prevent too large resizing */
+         }
+         #studentChart {
+            width: 100% !important;  /* Ensure canvas takes full width of its container */
+            height: 100% !important; /* Ensure canvas takes full height of its container */
+         }
+
+         .card-body {
+            padding: 20px;
+            background: #fff;
+            border-radius: 4px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+         }
+      
+         /* Hidden class for minimize effect */
+         .hidden {
+            display: none;
+         }
+      
+         /* Expanded style for maximize effect */
+         .expanded {
+            width: 100%;
+            margin: 0;
+         }
+      </style>
+      
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      
+      
+      <script>
+         const minimizeBtn = document.getElementById('minimizeBtn');
+         const maximizeBtn = document.getElementById('maximizeBtn');
+         const closeBtn = document.getElementById('closeBtn');
+         const chartCard = document.getElementById('chartCard');
+         const container = document.querySelector('.browser-tab-container');
+      
+         // Minimize functionality
+         minimizeBtn.addEventListener('click', () => {
+            chartCard.classList.toggle('hidden');
+         });
+      
+         // Maximize functionality
+         maximizeBtn.addEventListener('click', () => {
+            const isExpanded = container.classList.contains('expanded');
+            if (isExpanded) {
+               container.classList.remove('expanded');
+               container.style.width = '50%';  // Reset width to normal size
+               container.style.margin = '20px auto';  // Center the container
+            } else {
+               container.classList.add('expanded');
+               container.style.width = '100%';  // Expand to full width
+               container.style.margin = '0';  // Remove margin for full-screen effect
+            }
+         });
+      
+         // Close functionality
+         closeBtn.addEventListener('click', () => {
+            container.style.display = 'none';
+         });
+      
+         // Chart.js setup with zoom functionality
+         const ctx = document.getElementById('studentChart').getContext('2d');
+const studentChart = new Chart(ctx, {
+   type: 'line',
+   data: {
+      labels: ['Total Students', 'Total Classes', 'Present', 'Absent', 'Late'],
+      datasets: [
+         {
+            label: 'Attendance Statistics',
+            data: [50, 25, 40, 10, 5], // Replace with your data dynamically
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 2,
+            tension: 0.4,
+         },
+      ],
+   },
+   options: {
+      responsive: true,
+      plugins: {
+         legend: { position: 'top' },
+         zoom: {
+            pan: { enabled: true, mode: 'x' }, // Enable panning
+            zoom: { wheel: { enabled: true }, mode: 'x' }, // Enable zooming with wheel
+         },
+      },
+      scales: {
+         y: { beginAtZero: true },
+      },
+   },
+});
+
+// Resize chart when window size changes or when the chart container is resized
+window.addEventListener('resize', () => {
+   studentChart.resize();
+});
+
+      </script>
+</div>      
+
+</body>
+</html>

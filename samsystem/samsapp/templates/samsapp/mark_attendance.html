@@ -452,18 +452,16 @@
             </div>
         </div>
     </header>
-
     <div class="sidebar">
-        <a href="home.html"><i class="fas fa-home"></i></a>
-        <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i></a>
-        <a href="teacher-management.html"><i class="fas fa-chalkboard-teacher"></i></a>
+        <a href="{% url 'home' %}"><i class="fas fa-home"></i></a>
+        <a href="{% url 'dashboard' %}"><i class="fas fa-tachometer-alt"></i></a>
+        <!-- <a href="teacher-management.html"><i class="fas fa-chalkboard-teacher"></i></a>
         <a href="attendance-settings.html"><i class="fas fa-cogs"></i></a>
         <a href="reports.html"><i class="fas fa-chart-line"></i></a>
-        <a href="teacher.html"><i class="fas fa-user-tie"></i></a>
-        <a href="student.html"><i class="fas fa-user-graduate"></i></a>
-        <a href="class.html"><i class="fas fa-school"></i></a>
-        <a href="mark_attendance.html"><i class="fas fa-check-square"></i></a>
-        <a href=""><i class="fas fa-sign-out-alt"></i></a>
+        <a href="teacher.html"><i class="fas fa-user-tie"></i></a> -->
+        <a href="{% url 'class_list' %}"><i class="fas fa-school"></i></a>
+        <a href="{% url 'mark_attendance' %}"><i class="fas fa-check-square"></i></a>
+        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i></a>
     </div>
     <div class="container">
       <h1>Mark Attendance</h1>

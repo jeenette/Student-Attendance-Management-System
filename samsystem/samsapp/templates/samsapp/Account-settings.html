@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            background-color: #009DD0;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .search-bar input {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #01377D; /* Updated border color */
+            width: 200px;
+            font-size: 1rem;
+        }
+
+        .search-bar button {
+            background-color: #01377D; /* Updated button color */
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            margin-left: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .search-bar button:hover {
+            background-color: #007b8d; /* Hover color update */
+        }
+
+        .header-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-buttons button {
+            background-color: #009DD0; /* Updated button color */
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .header-buttons button:hover {
+            background-color: #007b8d;
+        }
+
+
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-image: url('https://png.pngtree.com/png-vector/20240724/ourlarge/pngtree-administrator-admin-avatar-png-image_12853668.png');
+            background-size: cover;
+            background-position: center;
+            border: 2px solid white;
+            cursor: pointer;
+            margin-left: 15px;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 15px;
+            top: 60px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 10px 20px;
+            color: #333;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #009DD0;
+            color: white;
+        }
+
+        .profile-pic:hover + .dropdown-menu {
+            display: block;
+        }
+
+        .container {
+            padding-top: 80px;
+            padding: 20px;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            color: #01377D;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .section input {
+            padding: 8px;
+            margin-bottom: 10px;
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .section button {
+            padding: 10px 20px;
+            background-color: #009DD0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .section button:hover {
+            background-color: #007b8d;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-group label {
+            margin-left: 10px;
+            font-size: 1rem;
+        }
+
+        footer {
+            background-color: #000000;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo {
+            width: 60px; /* Adjust size as needed */
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid white;
+            background-color: #fff;
+            object-fit: cover;
+        }
+
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-image: url('https://png.pngtree.com/png-vector/20240724/ourlarge/pngtree-administrator-admin-avatar-png-image_12853668.png');
+            background-size: cover;
+            background-position: center;
+            border: 2px solid white;
+            cursor: pointer;
+            margin-left: 15px;
+            margin-right: 20px;
+        }
+
+        .container {
+            margin-left: 250px;
+            padding: 2rem;
+            margin-top: 80px;
+            width: calc(100% - 250px);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: margin-left 0.3s, width 0.3s;
+        }
+
+        .sidebar {
+            background-color: #009DD0; /* Updated sidebar color */
+            color: white;
+            width: 80px;
+            height: 100vh;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            padding-top: 20px;
+            overflow-y: auto;
+            box-sizing: border-box;
+            transition: width 0.3s;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            border-bottom: 1px solid #009DD0; /* Updated border color */
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #007b8d; /* Updated hover color */
+            padding-left: 20px; /* Smooth sliding effect on hover */
+        }
+
+
+
+        .sidebar a i {
+            margin-right: 10px; /* Space between icon and text */
+            font-size: 1.3rem;
+        }
+
+        .sidebar a span {
+            display: none;
+            font-size: 1rem;
+        }
+
+        .sidebar a:hover span {
+            display: inline-block; /* Show text on hover */
+        }
+    </style>
+</head>
+<body>
+
+   <header>
+    <div class="logo-container">
+        <img src="https://png.pngtree.com/png-vector/20221126/ourmid/pngtree-attendance-management-blue-gradient-concept-icon-system-productivity-business-vector-png-image_42525028.jpg" alt="SAMS Logo" class="logo">
+    </div>
+      <div class="search-bar">
+          <input type="text" placeholder="Search...">
+          <button>Search</button>
+      </div>
+      <div class="header-buttons">
+          <button><i class="fas fa-bell"></i></button>
+          <div class="profile-pic" title="Admin Profile"></div>
+          <!-- Dropdown menu -->
+          <div class="dropdown-menu">
+            <a href="{% url 'account_settings' %}">Account Settings</a>
+              <a href="my-profile.html">My Profile</a>
+              <a href="logout.html">Logout</a>
+          </div>
+      </div>
+  </header>
+
+  <div class="sidebar">
+    <a href="{% url 'home' %}"><i class="fas fa-home"></i></a>
+    <a href="{% url 'dashboard' %}"><i class="fas fa-tachometer-alt"></i></a>
+    <!-- <a href="teacher-management.html"><i class="fas fa-chalkboard-teacher"></i></a>
+    <a href="attendance-settings.html"><i class="fas fa-cogs"></i></a>
+    <a href="reports.html"><i class="fas fa-chart-line"></i></a>
+    <a href="teacher.html"><i class="fas fa-user-tie"></i></a> -->
+    <a href="{% url 'class_list' %}"><i class="fas fa-school"></i></a>
+    <a href="{% url 'mark_attendance' %}"><i class="fas fa-check-square"></i></a>
+      <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i></a>
+ </div>
+  <div class="container">
+    <section class="section">
+        <h2>Update Account Information</h2>
+    
+        <!-- Combined Update Form -->
+        <form method="POST">
+            {% csrf_token %}
+            <label for="username">Username:</label>
+            <input type="text" name="username" value="{{ user.username }}" class="input-field">
+            
+            <label for="email">Email:</label>
+            <input type="email" name="email" value="{{ user.email }}" class="input-field">
+        
+            <label for="current_password">Current Password:</label>
+            <div class="password-container">
+                <input type="password" id="current_password" name="current_password" required>
+                <span class="toggle-password" onclick="togglePassword('current_password')">
+                    <i class="fas fa-eye"></i> <!-- Eye icon -->
+                </span>
+            </div>  
+        
+        
+            <label for="new_password">New Password:</label>
+            <div class="password-container">
+                <input type="password" id="new_password" name="new_password" required>
+                <span class="toggle-password" onclick="togglePassword('new_password')">
+                    <i class="fas fa-eye"></i> <!-- Eye icon -->
+                </span>
+            </div>
+        
+            <label for="confirm_password">Confirm New Password:</label>
+            <div class="password-container">
+                <input type="password" id="confirm_password" name="confirm_password" required>
+                <span class="toggle-password" onclick="togglePassword('confirm_password')">
+                    <i class="fas fa-eye"></i> <!-- Eye icon -->
+                </span>
+            </div>
+            {% if messages %}
+            <div class="alert-container">
+                <ul>
+                    {% for message in messages %}
+                        <li class="alert {% if message.tags %} alert-{{ message.tags }} {% endif %}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+            <button type="submit">Save Changes</button>
+            <button type="reset" style="background-color: #e53935; ">Cancel</button>
+        </form>
+        
+        
+        
+        <script src="https://kit.fontawesome.com/a076d05399.js"></script> <!-- FontAwesome for icons -->
+        
+        <script>
+            // Function to toggle password visibility
+            function togglePassword(fieldId) {
+                var field = document.getElementById(fieldId);
+                var icon = event.target.querySelector('i');
+                if (field.type === "password") {
+                    field.type = "text"; // Show password
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash'); // Change icon to "eye-slash"
+                } else {
+                    field.type = "password"; // Hide password
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye'); // Change icon back to "eye"
+                }
+            }
+        </script>
+        
+        <style>
+            .alert-container ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .alert {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+        font-size: 16px;
+        color: white;
+        display: flex;
+        align-items: center;
+    }
+
+    .alert-success {
+        background-color: #4CAF50;
+    }
+
+    .alert-danger {
+        background-color: #f44336;
+    }
+
+    .alert-info {
+        background-color: #2196F3;
+    }
+
+    .alert-warning {
+        background-color: #ff9800;
+    }
+            .password-container {
+                position: relative;
+                margin-bottom: 15px;
+            }
+        
+            .password-container input {
+                width: 950px;
+                padding: 10px;
+                font-size: 16px;
+                border-radius: 4px;
+                border: 1px solid #ddd;
+                outline: none;
+            }
+        
+            .password-container i {
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                cursor: pointer;
+                font-size: 1.2rem;
+                color: #888;
+            }
+        
+            .password-container i:hover {
+                color: #000;
+            }
+        
+            .toggle-password {
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                cursor: pointer;
+                color: #888;
+                font-size: 1.2rem;
+            }
+        
+            .toggle-password:hover {
+                color: #4CAF50; /* Highlight on hover */
+            }
+        
+            /* Form Styling */
+            form {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+            .cancel{
+                padding: 12px 20px;
+                background-color: #f44336;
+                color: white;
+                font-size: 16px;
+                font-weight: 600;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+    .cancel:hover {
+        background-color: red;
+    }
+        
+            .input-field {
+        width: 100%; /* Makes the input fields span the full width of their container */
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        outline: none;
+        box-sizing: border-box; /* Ensures padding is included in the width */
+        transition: border-color 0.3s ease;
+    }
+
+    /* Focused state for input fields */
+    .input-field:focus {
+        border-color: #4CAF50; /* Green color on focus */
+    }
+
+    label {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #555;
+    }
+        
+            button {
+                padding: 12px 20px;
+                background-color: #4CAF50;
+                color: white;
+                font-size: 16px;
+                font-weight: 600;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+        
+            button:hover {
+                background-color: #45a049;
+            }
+        </style>
+        
+</div>
+
+
+
+</body>
+</html>
