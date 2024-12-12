@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Notifications</title>
-   
+    <title>My Profile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         
-
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
@@ -279,7 +277,13 @@
             z-index: 10;
         }
 
-       
+        .container {
+            margin-top: 100px; /* To avoid overlap with fixed header */
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
         .class-selection, .attendance-group {
             background-color: #fff;
@@ -514,7 +518,301 @@
             }
 
 
+/* Notification Icon positioned on the right */
+        .notification-icon {
+                position: fixed;
+                top: 30px;
+                right: 70px;
+                z-index: 1000; /* Ensure the notification icon stays above the sidebar */
+            }
 
+            .notification-icon a {
+                display: block;
+                color: inherit;
+                text-decoration: none;
+                position: relative; 
+            }
+
+
+
+            /* Notification Badge Styling with Red Border */
+            .notification-badge {
+                position: absolute;
+                bottom: 9px;  /* Adjust to position closer to the icon */
+                left: 5px; /* Adjust to position closer to the icon */
+                background-color: red;
+                color: white;
+                border-radius: 50%;
+                padding: 3px 6px; /* Smaller padding */
+                font-size: 0.7em; /* Smaller font size */
+                border: 1px solid red;  /* Red border around the notification count */
+                min-width: 18px; /* Set a minimum width to prevent badge from being too small */
+                text-align: center;
+            }
+
+            /* Extra Notification Icon positioned beside the main icon */
+            .extra-notification-icon {
+                position: absolute;
+                top:10px;
+                left: -40px;  /* Adjust the left position to place it beside the main notification icon */
+                z-index: 1000;
+            }
+
+        body {
+         font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            background-color: #009DD0;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .search-bar input {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #01377D; /* Updated border color */
+            width: 200px;
+            font-size: 1rem;
+        }
+
+        .search-bar button {
+            background-color: #01377D; /* Updated button color */
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            margin-left: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .search-bar button:hover {
+            background-color: #007b8d; /* Hover color update */
+        }
+
+        .header-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-buttons button {
+            background-color: #009DD0; /* Updated button color */
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .header-buttons button:hover {
+            background-color: #007b8d;
+        }
+
+
+
+        .container {
+            padding-top: 80px;
+            padding: 20px;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            color: #01377D;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .section input {
+            padding: 8px;
+            margin-bottom: 10px;
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .section button {
+            padding: 10px 20px;
+            background-color: #009DD0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .section button:hover {
+            background-color: #007b8d;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-group label {
+            margin-left: 10px;
+            font-size: 1rem;
+        }
+
+        footer {
+            background-color: #000000;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo {
+            width: 60px; /* Adjust size as needed */
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid white;
+            background-color: #fff;
+            object-fit: cover;
+        }
+
+
+        .container {
+            margin-left: 250px;
+            padding: 2rem;
+            margin-top: 80px;
+            width: calc(100% - 250px);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: margin-left 0.3s, width 0.3s;
+        }
+
+        .sidebar {
+            background-color: #009DD0; /* Updated sidebar color */
+            color: white;
+            width: 80px;
+            height: 100vh;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            padding-top: 20px;
+            overflow-y: auto;
+            box-sizing: border-box;
+            transition: width 0.3s;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            border-bottom: 1px solid #009DD0; /* Updated border color */
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #007b8d; /* Updated hover color */
+            padding-left: 20px; /* Smooth sliding effect on hover */
+        }
+
+
+
+        .sidebar a i {
+            margin-right: 10px; /* Space between icon and text */
+            font-size: 1.3rem;
+        }
+
+        .sidebar a span {
+            display: none;
+            font-size: 1rem;
+        }
+
+        .sidebar a:hover span {
+            display: inline-block; /* Show text on hover */
+        }
+        .profile-pic {
+         width: 40px;
+         height: 40px;
+         border-radius: 50%;
+         background-size: cover;
+         background-position: center;
+         border: 2px solid white;
+         cursor: pointer;
+         margin-right: 25px;
+         overflow: hidden; /* Ensures the image is cropped to the circular shape */
+      }
+
+      .profile-pic img {
+         width: 100%; /* Ensures the image takes up the full container width */
+         height: 100%; /* Ensures the image takes up the full container height */
+         object-fit: cover; /* Ensures the image maintains aspect ratio while covering the container */
+      }
+
+      .dropdown-menu {
+         display: none;  /* Hidden by default */
+         position: absolute;
+         top: 60px;  /* Adjust this for the menu's position */
+         right: 0;
+         background-color: white;
+         border: 1px solid #ddd;
+         border-radius: 8px;
+         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+         z-index: 10;  /* Ensure it appears above other content */
+      }
+
+      .dropdown-menu a {
+         display: block;
+         padding: 10px 20px;
+         color: #333;
+         text-decoration: none;
+         font-size: 1rem;
+      }
+
+      .dropdown-menu a:hover {
+         background-color: #009DD0;
+         color: white;
+      }
+
+      .profile-pic:hover + .dropdown-menu {
+         display: block;  /* Show the dropdown when hovering over profile picture */
+      }
 
 
 
@@ -522,30 +820,28 @@
 </head>
 <body>
     {% load static %}
-    <header>
-     <div class="logo-container">
-         <img src="{% static '/Pink Blue Cute Simple Y2k Class Logo.png' %}" alt="SAMS Logo" class="logo">
-     </div>
-        
-     <div class="search-bar">
+   <header>
+    <div class="logo-container">
+        <img src="{% static '/Pink Blue Cute Simple Y2k Class Logo.png' %}" alt="SAMS Logo" class="logo">
+    </div>
+    <div class="search-bar">
         <form method="get" action="{% url 'search_view' %}">
             <input type="text" name="q" placeholder="Search..." value="{{ request.GET.q }}">
             <button type="submit">Search</button>
         </form>
         
       </div>
-        <div class="header-buttons">
-           <!-- Notification Icon -->
-<div class="notification-icon">
-    <div class="extra-notification-icon">
-        <div class="notification-badge">{{ unread_count|default:0 }}</div> <!-- Notification count badge -->
-        <a href="{% url 'manage_notifications' %}" class="fas fa-bell">
-            
-        </a>
-    </div>
-</div>
+      <div class="header-buttons">
+        <div class="notification-icon">
+            <div class="extra-notification-icon">
+                <div class="notification-badge">{{ unread_count|default:0 }}</div> <!-- Notification count badge -->
+                <a href="{% url 'manage_notifications' %}" class="fas fa-bell">
+                    
+                </a>
+            </div>
+        </div>
           <div class="profile-pic" title="Admin Profile">
-            
+            <img src="{{ profile.profile_picture.url }}" alt="Profile Picture">
         </div>
           <!-- Dropdown menu -->
           <div class="dropdown-menu">
@@ -570,135 +866,100 @@
     <a href="{% url 'class_list' %}"><i class="fas fa-school"></i></a>
     <a href="{% url 'mark_attendance' %}"><i class="fas fa-check-square"></i></a>
     <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i></a>
-</div> <div class="container"> 
-    <!-- Page Title -->
-    <h2 class="text-center mb-4">Manage Notifications</h2>
-
-    <!-- Back Button -->
-    <div class="text-start mb-4">
-        <a href="javascript:history.back()" class="btn btn-light btn-sm">
-            <i class="bi bi-arrow-left"></i> Back
-        </a>
-    </div>
-
-    <!-- Notification Bell Icon with Unread Count -->
-    <div class="text-center position-relative mb-4">
-        <div class="notification-iconn d-inline-block">
-            <i class="bi bi-bell fs-1 text-primary"></i>
-            {% if unread_count > 0 %}
-                <span class="notification-badgee position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    {{ unread_count }}
-                </span>
-            {% endif %}
+</div>
+<div class="container"> 
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-image">
+            <img src="{{ profile.profile_picture.url }}" alt="Profile Picture">
         </div>
-        <p class="mt-2 text-muted">You have {{ unread_count }} unread notification(s)</p>
-    </div>
-
-    <!-- Notifications List -->
-    <div>
-        <ul class="list-group">
-            {% for notification in notifications %}
-                <li class="list-group-item {% if not notification.is_read %}unread{% endif %} d-flex justify-content-between align-items-center">
-                    <div class="notification-content">
-                        <strong>{{ notification.message }}</strong>
-                        <small class="text-muted d-block">{{ notification.created_at|date:"M d, Y H:i" }}</small>
-                    </div>
-                    {% if not notification.is_read %}
-                        <a href="{% url 'mark_as_read' notification.id %}" class="btn btn-outline-success btn-sm">Mark as Read</a>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
+        <div class="profile-info">
+            <h2>{{ profile.user.username }}</h2>
+            <p>{{ profile.bio }}</p>
+            <p><strong>Location:</strong> {{ profile.location }}</p>
+            <p><strong>Birth Date:</strong> {{ profile.birth_date }}</p>
+            <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+        </div>
     </div>
 </div>
+{% endblock %}
 
 {% block extra_css %}
 <style>
-    /* General container styling */
-    .container {
-        size: 1rem;
-        max-width: 1500px;
+    /* Main profile container styling */
+    .profile-container {
+        width: 80%;
+        margin: 30px auto;
+        padding: 20px;
         background-color: #fff;
         border-radius: 12px;
-        margin-left: 156px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        font-family: 'Arial', sans-serif;
     }
 
-    /* Notification Bell Styling */
-    .notification-iconn {
-        position: relative;
+    /* Profile header layout */
+    .profile-header {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 20px 0;
     }
 
-    .notification-badgee {
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        font-size: 14px;
-        padding: 6px 10px;
-        background-color: #dc3545;
-        color: white;
+    /* Profile image styling */
+    .profile-image img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #eee;
     }
 
-    /* List item styling */
-    .list-group-item {
-        border-radius: 10px;
-        background-color: #f8f9fa;
+    /* Profile info section */
+    .profile-info {
+        flex: 1;
+        margin-left: 20px;
+    }
+
+    .profile-info h2 {
+        font-size: 30px;
+        font-weight: 600;
         margin-bottom: 10px;
-        transition: all 0.3s ease;
-    }
-
-    /* Styling for unread notifications */
-    .unread {
-        background-color: #f0f8ff;
-    }
-
-    .list-group-item:hover {
-        transform: scale(1.03);
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Button and Icon Styling */
-    .btn-light {
-        color: #6c757d;
-        border-color: #6c757d;
-    }
-
-    .btn-light:hover {
-        background-color: #e9ecef;
-    }
-
-    .btn-outline-success {
-        border-color: #28a745;
-        color: #28a745;
-    }
-
-    .btn-outline-success:hover {
-        background-color: #28a745;
-        color: white;
-    }
-
-    /* Notification content style */
-    .notification-content strong {
         color: #333;
+    }
+
+    /* Styling for bio and other info */
+    .profile-info p {
         font-size: 16px;
+        color: #666;
+        line-height: 1.6;
+        margin: 8px 0;
     }
 
-    .notification-content small {
-        color: #6c757d;
-        font-size: 12px;
+    .profile-info strong {
+        color: #444;
     }
 
-    /* Typography improvements */
-    h2 {
-        font-family: 'Roboto', sans-serif;
-        font-weight: 500;
-        color: #333;
+    /* Edit profile button styling */
+    .profile-info .btn {
+        background-color: #4CAF50;
+        color: #fff;
+        padding: 12px 24px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 16px;
+        margin-top: 20px;
+        transition: background-color 0.3s ease;
     }
-    
+
+    .profile-info .btn:hover {
+        background-color: #45a049;
+    }
 </style>
 {% endblock %}
+</div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+
 </body>
 </html>

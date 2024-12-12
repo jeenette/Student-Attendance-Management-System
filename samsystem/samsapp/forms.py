@@ -2,10 +2,15 @@ from django import forms
 from .models import Student
 from .models import Class
 from django.contrib.auth.models import User
-
+from .models import Profile
 from .models import Attendance
 
 
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['bio', 'profile_picture', 'location', 'birth_date']
+        
 
 class StudentForm(forms.ModelForm):
     class Meta:

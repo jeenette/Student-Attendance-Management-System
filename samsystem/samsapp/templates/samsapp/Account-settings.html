@@ -6,6 +6,45 @@
     <title>Account Settings</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+         Notification Icon positioned on the right */
+        .notification-icon {
+                position: fixed;
+                top: 30px;
+                right: 70px;
+                z-index: 1000; /* Ensure the notification icon stays above the sidebar */
+            }
+
+            .notification-icon a {
+                display: block;
+                color: inherit;
+                text-decoration: none;
+                position: relative; 
+            }
+
+
+
+            /* Notification Badge Styling with Red Border */
+            .notification-badge {
+                position: absolute;
+                bottom: 9px;  /* Adjust to position closer to the icon */
+                left: 5px; /* Adjust to position closer to the icon */
+                background-color: red;
+                color: white;
+                border-radius: 50%;
+                padding: 3px 6px; /* Smaller padding */
+                font-size: 0.7em; /* Smaller font size */
+                border: 1px solid red;  /* Red border around the notification count */
+                min-width: 18px; /* Set a minimum width to prevent badge from being too small */
+                text-align: center;
+            }
+
+            /* Extra Notification Icon positioned beside the main icon */
+            .extra-notification-icon {
+                position: absolute;
+                top:10px;
+                left: -40px;  /* Adjust the left position to place it beside the main notification icon */
+                z-index: 1000;
+            }
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
@@ -80,7 +119,7 @@
             background-color: #007b8d;
         }
 
-
+    
         .profile-pic {
             width: 40px;
             height: 40px;
@@ -90,8 +129,14 @@
             background-position: center;
             border: 2px solid white;
             cursor: pointer;
-            margin-left: 15px;
+            margin-right: 25px;
         }
+
+      .profile-pic img {
+         width: 100%; /* Ensures the image stretches to fit the container */
+         height: 100%; /* Ensures the image stretches to fit the container */
+         object-fit: cover; /* Ensures the image keeps its aspect ratio while covering the circle */
+      }
 
         .dropdown-menu {
             display: none;
@@ -119,6 +164,7 @@
 
         .profile-pic:hover + .dropdown-menu {
             display: block;
+
         }
 
         .container {
@@ -196,19 +242,6 @@
             object-fit: cover;
         }
 
-        .profile-pic {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-image: url('https://png.pngtree.com/png-vector/20240724/ourlarge/pngtree-administrator-admin-avatar-png-image_12853668.png');
-            background-size: cover;
-            background-position: center;
-            border: 2px solid white;
-            cursor: pointer;
-            margin-left: 15px;
-            margin-right: 20px;
-        }
-
         .container {
             margin-left: 250px;
             padding: 2rem;
@@ -220,6 +253,88 @@
             gap: 20px;
             transition: margin-left 0.3s, width 0.3s;
         }
+
+    
+
+        
+
+        .container {
+            padding-top: 80px;
+            padding: 20px;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            color: #01377D;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .section input {
+            padding: 8px;
+            margin-bottom: 10px;
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .section button {
+            padding: 10px 20px;
+            background-color: #009DD0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .section button:hover {
+            background-color: #007b8d;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-group label {
+            margin-left: 10px;
+            font-size: 1rem;
+        }
+
+        footer {
+            background-color: #000000;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo {
+            width: 60px; /* Adjust size as needed */
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid white;
+            background-color: #fff;
+            object-fit: cover;
+        }
+
+    
+
 
         .sidebar {
             background-color: #009DD0; /* Updated sidebar color */
@@ -266,37 +381,148 @@
         .sidebar a:hover span {
             display: inline-block; /* Show text on hover */
         }
+        .profile-pic {
+         width: 40px;
+         height: 40px;
+         border-radius: 50%;
+         background-size: cover;
+         background-position: center;
+         border: 2px solid white;
+         cursor: pointer;
+         margin-left: 15px;
+         overflow: hidden; /* Ensures the image is cropped to the circular shape */
+      }
+
+      .profile-pic img {
+         width: 100%; /* Ensures the image takes up the full container width */
+         height: 100%; /* Ensures the image takes up the full container height */
+         object-fit: cover; /* Ensures the image maintains aspect ratio while covering the container */
+      }
+
+      .dropdown-menu {
+         display: none;  /* Hidden by default */
+         position: absolute;
+         top: 60px;  /* Adjust this for the menu's position */
+         right: 0;
+         background-color: white;
+         border: 1px solid #ddd;
+         border-radius: 8px;
+         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+         z-index: 10;  /* Ensure it appears above other content */
+      }
+
+      .dropdown-menu a {
+         display: block;
+         padding: 10px 20px;
+         color: #333;
+         text-decoration: none;
+         font-size: 1rem;
+      }
+
+      .dropdown-menu a:hover {
+         background-color: #009DD0;
+         color: white;
+      }
+
+      .profile-pic:hover + .dropdown-menu {
+         display: block;  /* Show the dropdown when hovering over profile picture */
+      }
+      .notification-icon {
+                position: fixed;
+                top: 30px;
+                right: 70px;
+                z-index: 1000; /* Ensure the notification icon stays above the sidebar */
+            }
+
+            .notification-icon a {
+                display: block;
+                color: inherit;
+                text-decoration: none;
+                position: relative; 
+            }
+
+
+
+            /* Notification Badge Styling with Red Border */
+            .notification-badge {
+                position: absolute;
+                bottom: 9px;  /* Adjust to position closer to the icon */
+                left: 5px; /* Adjust to position closer to the icon */
+                background-color: red;
+                color: white;
+                border-radius: 50%;
+                padding: 3px 6px; /* Smaller padding */
+                font-size: 0.7em; /* Smaller font size */
+                border: 1px solid red;  /* Red border around the notification count */
+                min-width: 18px; /* Set a minimum width to prevent badge from being too small */
+                text-align: center;
+            }
+
+            /* Extra Notification Icon positioned beside the main icon */
+            .extra-notification-icon {
+                position: absolute;
+                top:10px;
+                left: -40px;  /* Adjust the left position to place it beside the main notification icon */
+                z-index: 1000;
+            }
+
+
+
     </style>
 </head>
 <body>
-
+    {% load static %}
    <header>
     <div class="logo-container">
-        <img src="https://png.pngtree.com/png-vector/20221126/ourmid/pngtree-attendance-management-blue-gradient-concept-icon-system-productivity-business-vector-png-image_42525028.jpg" alt="SAMS Logo" class="logo">
+        <img src="{% static '/Pink Blue Cute Simple Y2k Class Logo.png' %}" alt="SAMS Logo" class="logo">
     </div>
       <div class="search-bar">
-          <input type="text" placeholder="Search...">
-          <button>Search</button>
+        <form method="get" action="{% url 'search_view' %}">
+            <input type="text" name="q" placeholder="Search..." value="{{ request.GET.q }}">
+            <button type="submit">Search</button>
+        </form>
+        
       </div>
       <div class="header-buttons">
-          <button><i class="fas fa-bell"></i></button>
-          <div class="profile-pic" title="Admin Profile"></div>
+        <div class="notification-icon">
+            <div class="extra-notification-icon">
+                <div class="notification-badge">{{ unread_count|default:0 }}</div> <!-- Notification count badge -->
+                <a href="{% url 'manage_notifications' %}" class="fas fa-bell">
+                    
+                </a>
+            </div>
+        </div>
+          <div class="profile-pic" title="Admin Profile">
+            <img src="{{ profile.profile_picture.url }}" alt="Profile Picture">
+        </div>
           <!-- Dropdown menu -->
           <div class="dropdown-menu">
             <a href="{% url 'account_settings' %}">Account Settings</a>
-              <a href="my-profile.html">My Profile</a>
-              <a href="logout.html">Logout</a>
+            <a href="{% url 'profile' %}">My Profile</a>
+            <a href="logout.html">Logout</a>
+            <script>// Close dropdown when clicking outside
+            function toggleDropdown() {
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+                document.addEventListener('click', function (event) {
+                    const dropdown = document.getElementById('dropdownMenu');
+                    const profilePic = document.querySelector('.profile-pic');
+                
+                    // Close if clicked outside
+                    if (!profilePic.contains(event.target) && !dropdown.contains(event.target)) {
+                        dropdown.style.display = 'none';
+                    }
+                });
+                </script>
           </div>
       </div>
   </header>
 
   <div class="sidebar">
-    <a href="{% url 'home' %}"><i class="fas fa-home"></i></a>
+
     <a href="{% url 'dashboard' %}"><i class="fas fa-tachometer-alt"></i></a>
-    <!-- <a href="teacher-management.html"><i class="fas fa-chalkboard-teacher"></i></a>
-    <a href="attendance-settings.html"><i class="fas fa-cogs"></i></a>
-    <a href="reports.html"><i class="fas fa-chart-line"></i></a>
-    <a href="teacher.html"><i class="fas fa-user-tie"></i></a> -->
     <a href="{% url 'class_list' %}"><i class="fas fa-school"></i></a>
     <a href="{% url 'mark_attendance' %}"><i class="fas fa-check-square"></i></a>
       <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i></a>
@@ -315,29 +541,45 @@
             <input type="email" name="email" value="{{ user.email }}" class="input-field">
         
             <label for="current_password">Current Password:</label>
-            <div class="password-container">
-                <input type="password" id="current_password" name="current_password" required>
-                <span class="toggle-password" onclick="togglePassword('current_password')">
-                    <i class="fas fa-eye"></i> <!-- Eye icon -->
-                </span>
-            </div>  
-        
-        
-            <label for="new_password">New Password:</label>
-            <div class="password-container">
-                <input type="password" id="new_password" name="new_password" required>
-                <span class="toggle-password" onclick="togglePassword('new_password')">
-                    <i class="fas fa-eye"></i> <!-- Eye icon -->
-                </span>
-            </div>
-        
-            <label for="confirm_password">Confirm New Password:</label>
-            <div class="password-container">
-                <input type="password" id="confirm_password" name="confirm_password" required>
-                <span class="toggle-password" onclick="togglePassword('confirm_password')">
-                    <i class="fas fa-eye"></i> <!-- Eye icon -->
-                </span>
-            </div>
+<div class="password-container">
+    <input type="password" id="current_password" name="current_password" required>
+    <span class="toggle-password" onclick="togglePassword('current_password')">
+        <i class="fas fa-eye"></i> <!-- Eye icon -->
+    </span>
+</div>
+
+<label for="new_password">New Password:</label>
+<div class="password-container">
+    <input type="password" id="new_password" name="new_password" required>
+    <span class="toggle-password" onclick="togglePassword('new_password')">
+        <i class="fas fa-eye"></i> <!-- Eye icon -->
+    </span>
+</div>
+
+<label for="confirm_password">Confirm New Password:</label>
+<div class="password-container">
+    <input type="password" id="confirm_password" name="confirm_password" required>
+    <span class="toggle-password" onclick="togglePassword('confirm_password')">
+        <i class="fas fa-eye"></i> <!-- Eye icon -->
+    </span>
+</div>
+
+<script>
+    function togglePassword(id) {
+        var passwordInput = document.getElementById(id);
+        var passwordIcon = passwordInput.nextElementSibling.querySelector('i');
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            passwordIcon.classList.remove('fa-eye');
+            passwordIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = "password";
+            passwordIcon.classList.remove('fa-eye-slash');
+            passwordIcon.classList.add('fa-eye');
+        }
+    }
+</script>
+
             {% if messages %}
             <div class="alert-container">
                 <ul>
@@ -347,7 +589,7 @@
                 </ul>
             </div>
         {% endif %}
-            <button type="submit">Save Changes</button>
+            <button type="submit" style="background-color: #4CAF50; ">Save Changes</button>
             <button type="reset" style="background-color: #e53935; ">Cancel</button>
         </form>
         
@@ -403,34 +645,44 @@
     .alert-warning {
         background-color: #ff9800;
     }
-            .password-container {
-                position: relative;
-                margin-bottom: 15px;
-            }
-        
-            .password-container input {
-                width: 950px;
-                padding: 10px;
-                font-size: 16px;
-                border-radius: 4px;
-                border: 1px solid #ddd;
-                outline: none;
-            }
-        
-            .password-container i {
-                position: absolute;
-                right: 10px;
-                top: 50%;
-                transform: translateY(-50%);
-                cursor: pointer;
-                font-size: 1.2rem;
-                color: #888;
-            }
-        
-            .password-container i:hover {
-                color: #000;
-            }
-        
+          /* Password Container Styling */
+.password-container {
+    position: relative;
+    width: 100%; /* Adjust the width as necessary */
+    margin-bottom: 20px;
+}
+
+/* Password Input Styling */
+.password-container input {
+    width: 975px;
+    max-width: 1420px; /* Ensures the input takes the full width of the container */
+    padding: 10px 40px 10px 10px; /* Adding padding to the input to make room for the icon */
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Eye Icon Inside the Input */
+.password-container .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+/* Font Awesome Icon Styling */
+.password-container .toggle-password i {
+    font-size: 18px;
+    color: #333;
+}
+
+/* Focus Effect for the Input */
+.password-container input:focus {
+    border-color: green; /* Blue border when input is focused */
+    outline: none;
+}
+
             .toggle-password {
                 position: absolute;
                 right: 10px;

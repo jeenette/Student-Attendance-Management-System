@@ -26,8 +26,42 @@ from rest_framework.decorators import api_view
 from datetime import datetime
 from django.contrib.auth import update_session_auth_hash
 from django.utils.timezone import now
+from .models import Profile
+from .forms import ProfileForm
 
+def search_view(request):
+    query = request.GET.get('q', '')  # Get the search term from the URL
+    
+    if query:
+        # Perform a search, filtering by student name or email
+        students = Student.objects.filter(student_fullname__icontains=query) | Student.objects.filter(student_email__icontains=query)
+    else:
+        students = Student.objects.all()  # If no query, show all students
 
+    return render(request, 'samsapp/student_list.html', {'students': students, 'query': query})
+
+@login_required(login_url='login')
+def profile_view(request):
+    user = request.user
+    profile, created = Profile.objects.get_or_create(user=user)
+    if created:
+        messages.success(request, 'Your profile was created successfully!')
+    return render(request, 'samsapp/profile.html', {'profile': profile})
+
+@login_required(login_url='login')
+def edit_profile(request):
+    profile = get_object_or_404(Profile, user=request.user)
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile was updated successfully!')
+            return redirect('profile')
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, 'samsapp/edit_profile.html', {'form': form})
+
+@login_required(login_url='login')
 def dashboard(request):
     # Total students
     total_students = Student.objects.count()
@@ -54,7 +88,7 @@ def dashboard(request):
 # # MARK ATTENDANCE
 # def mark_attendance(request):
 #     return render(request, 'samsapp/mark_attendance.html')
-
+@login_required(login_url='login')
 def mark_attendance(request):
     classes = Class.objects.all()  # Get all classes
     students = Student.objects.all()  # Get all students
@@ -87,7 +121,7 @@ def mark_attendance(request):
 
     return render(request, 'samsapp/mark_attendance.html', {'classes': classes, 'students': students})
 
-
+@login_required(login_url='login')
 def attendance_view(request):
     today_date = now().date()  # Get today's date in YYYY-MM-DD format
     return render(request, 'samsapp/attendance_tracking.html', {'today_date': today_date})

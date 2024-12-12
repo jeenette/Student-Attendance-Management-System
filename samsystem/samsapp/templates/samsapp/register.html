@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+
     <title>Register</title>
     <style>
         body {
@@ -40,10 +42,7 @@
             width: 100px;
             border-radius: 50%;
         }
-        .avatar img {
-          width: 500px;
-          border-radius: 50%;
-        }
+      
         .right-section {
             background-color: #e6f1f8;
             width: 50%;
@@ -100,6 +99,58 @@
         a{
             text-decoration: none;
         }
+        @keyframes typing {
+    0% {
+        width: 0; /* Start with no visible text */
+    }
+    100% {
+        width: 100%; /* End with all text visible */
+    }
+}
+h2{
+    margin-top:100px;
+}
+
+h3 {
+    font-family: 'Arial', sans-serif; /* Clean, modern font */
+    font-size: 36px; /* Larger text size */
+    font-weight: bold; /* Bold for better visibility */
+    color: white; /* White color */
+    text-align: center; /* Center align the text */
+    letter-spacing: 1px; /* Space between letters */
+    margin-top: 50px; /* Margin at the top */
+    text-transform: uppercase; /* Capitalize the text */
+    text-shadow: 2px 2px 4px rgba(1, 1, 1, 0.5); /* Text shadow effect */
+    overflow: hidden; /* Hide text during animation */
+    border-right: 1px solid white; /* Simulate cursor effect */
+    width: 0; /* Start with no width */
+    animation: typing 3s steps(40) 1s forwards, blink 0.75s step-end infinite; /* Apply typing animation */
+}
+
+/* Optional: Cursor blinking effect */
+@keyframes blink {
+    50% {
+        border-color: transparent; /* Hide cursor halfway */
+    }
+}
+
+/* Allow wrapping of text after two words */
+.word-wrapper {
+    display: inline-block;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    width: 300px;
+    margin-top: 20px;
+}
+
+
     </style>
     {% load static %}
 </head>
@@ -109,9 +160,28 @@
         <div class="left-section">
             <div class="avatar">
                 <!-- Make sure the path here is correct -->
-                <img src="https://png.pngtree.com/png-vector/20221126/ourmid/pngtree-attendance-management-blue-gradient-concept-icon-system-productivity-business-vector-png-image_42525028.jpg" alt="User Avatar">
+                <img src="{% static '/Pink Blue Cute Simple Y2k Class Logo.png' %}" alt="User Avatar">
             </div>
-            <h3>Admin Registration System</h3>
+            <h3>Student Attendance Management System</h3>
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const text = "Student Attendance Management System"; // Your text
+                const h3Element = document.querySelector('h3');
+                
+                // Split text into words and insert a <br> after every 2 words
+                const words = text.split(' ');
+                let formattedText = '';
+                
+                for (let i = 0; i < words.length; i++) {
+                    formattedText += words[i] + ' ';
+                    if ((i + 1) % 2 === 0) {  // Add a line break after every 2 words
+                        formattedText += '<br>';
+                    }
+                }
+                
+                h3Element.innerHTML = formattedText; // Set the formatted text into the <h3> element
+            });
+        </script>          
         </div>
 
         <!-- Right Section -->
