@@ -79,6 +79,7 @@
 
         .btn-primary, .btn-warning, .btn-danger {
             width: 100%;
+            margin-bottom: 5px;
         }
 
         .btn-success {
@@ -165,6 +166,7 @@
 
 <!-- Sidebar Navigation -->
 <div class="sidebar">
+    <a href="{% url 'mark_attendance' %}">Mark Attendance</a>
     <a href="{% url 'student_list' %}">Student List</a>
     {% if user.is_staff %}
         <a href="{% url 'user_list' %}" class="active">User List</a>
@@ -172,7 +174,6 @@
     <a href="{% url 'assign_student' %}">Assign Student</a>
     <a href="{% url 'logout' %}">Logout</a>
 </div>
-
 
 <!-- Notification Icon -->
 <div class="notification-icon">
@@ -186,8 +187,6 @@
         <img src="https://cdn-icons-png.flaticon.com/512/60/60977.png" alt="Notifications">
         <span class="notification-badge">{{ unread_count|default:0 }}</span> <!-- Notification count badge -->
     </a>
-    <!-- Extra Notification Icon added next to the main one -->
-    
 </div>
 
 <!-- Main Content -->
@@ -202,36 +201,41 @@
                 <div class="text-end mb-3">
                     <a href="{% url 'class_add' %}" class="btn btn-primary">Add New Class</a>
                 </div>
-                <table class="table table-bordered table-striped">
-                    <thead class="bg-primary text-white">
-                        <tr>
-                            <th>Class Name</th>
-                            <th>Course Code</th>
-                            <th>Class Time</th>
-                            <th>Room Number</th>
-                            <th>Max Students</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for class in classes %}
+                {% if classes %}
+                    <table class="table table-bordered table-striped">
+                        <thead class="bg-primary text-white">
                             <tr>
-                                <td>{{ class.class_name|truncatechars:20 }}</td>
-                                <td>{{ class.course_code|truncatechars:20 }}</td>
-                                <td>{{ class.class_time }}</td>
-                                <td>{{ class.room_number|truncatechars:20 }}</td>
-                                <td>{{ class.max_students }}</td>
-                                <td class="text-center">
-                                    <a href="{% url 'class_update' class.class_id %}" class="btn btn-warning btn-sm" onclick="return confirm('Do you want to edit this class?');">Edit</a>
-                                    <form action="{% url 'class_delete' class.class_id %}" method="post" style="display: inline;">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this class?');">Delete</button>
-                                    </form>
-                                </td>
+                                <th>Class Name</th>
+                                <th>Course Code</th>
+                                <th>Class Time</th>
+                                <th>Room Number</th>
+                                <th>Max Students</th>
+                                <th>Actions</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for class in classes %}
+                                <tr>
+                                    <td>{{ class.class_name|truncatechars:20 }}</td>
+                                    <td>{{ class.course_code|truncatechars:20 }}</td>
+                                    <td>{{ class.class_time }}</td>
+                                    <td>{{ class.room_number|truncatechars:20 }}</td>
+                                    <td>{{ class.max_students }}</td>
+                                    <td class="text-center">
+                                        <a href="{% url 'class_update' class.class_id %}" class="btn btn-warning btn-sm" onclick="return confirm('Do you want to edit this class?');">Edit</a>
+                                        <form action="{% url 'class_delete' class.class_id %}" method="post" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this class?');">Delete</button>
+                                        </form>
+                                        
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No classes available. Please add a class.</p>
+                {% endif %}
             </div>
         </div>
     </div>

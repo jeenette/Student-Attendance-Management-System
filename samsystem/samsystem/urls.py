@@ -50,7 +50,16 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
 
 # Attendance
- path('attendance/mark/<int:student_id>/<int:class_id>/', views.mark_attendance, name='mark_attendance'),
  path('', views.home, name='home'),
+
+ # Attendance tracking page
+    path('attendance/tracking/', views.attendance_tracking, name='attendance_tracking'),
+    
+    # Account settings page
+    path('account/settings/', views.account_settings, name='account_settings'),
+  
+
+path('mark-attendance/', views.mark_attendance, name='mark_attendance'),
+   
 ]
 

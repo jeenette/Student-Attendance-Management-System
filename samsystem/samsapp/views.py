@@ -6,12 +6,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from .models import Class
-from django.core.exceptions import ValidationError
-from django.utils import timezone
 from .forms import UserRegistrationForm, UserUpdateForm, StudentForm, ClassForm, LoginForm
-from .models import Notification, ClassList
+from .models import Notification
 from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 from .models import Student
 from reportlab.lib import colors
@@ -19,50 +16,97 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from django.http import HttpResponseRedirect
 from django.contrib.auth.hashers import make_password
 from django.urls import reverse
-from django.http import HttpResponseForbidden
-
-from .forms import AttendanceForm
+from django.contrib.auth.models import User
+from samsapp.models import Student, Class
 from .models import Attendance
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.contrib import messages  # For success messages
+from rest_framework.decorators import api_view
+from datetime import datetime
+from django.utils.timezone import now
 
-@login_required(login_url='login')
-def mark_attendance(request, student_id, class_id):
-    try:
-        student = Student.objects.get(id=student_id)
-        class_instance = Class.objects.get(id=class_id)
-        attendance, created = Attendance.objects.get_or_create(
-            student=student,
-            class_name=class_instance,
-            date=request.POST.get('date', None),
-        )
-        
-        if request.method == "POST":
-            form = AttendanceForm(request.POST)
-            if form.is_valid():
-                attendance.status = form.cleaned_data.get('status', 'A')  # default to 'Absent'
-                attendance.save()
-                messages.success(request, 'Attendance marked successfully!')
-                return redirect('class_list')  # Or whichever view makes sense
-            else:
-                messages.error(request, 'There was an error marking attendance. Please try again.')
-                return render(request, 'attendance/mark.html', {'form': form, 'attendance': attendance})
+# # MARK ATTENDANCE
+# def mark_attendance(request):
+#     return render(request, 'samsapp/mark_attendance.html')
+
+def mark_attendance(request):
+    classes = Class.objects.all()  # Get all classes
+    students = Student.objects.all()  # Get all students
+
+    if request.method == 'POST':
+        class_id = request.POST.get('class_id')  # Get selected class
+        date = request.POST.get('attendance_date')  # Get attendance date
+
+        # Check if class_id and date are provided
+        if class_id and date:
+            # Process attendance for each student
+            for student in students:
+                attendance_status = request.POST.get(f'attendance_{student.student_id}')  # Get attendance status for each student
+
+                if attendance_status:
+                    # Create or update attendance record
+                    Attendance.objects.update_or_create(
+                        student=student,
+                        class_id=class_id,
+                        date=date,
+                        defaults={'status': attendance_status}
+                    )
+
+            messages.success(request, "Attendance marked successfully!")
+            return redirect('attendance_tracking')  # Redirect to attendance tracking page
 
         else:
-            form = AttendanceForm()  # Display empty form if it's GET request
+            messages.error(request, "Please select a class and date.")
+            return redirect('mark_attendance')  # Redirect back to attendance marking form
 
-        return render(request, 'attendance/mark.html', {'form': form, 'attendance': attendance})
-
-    except Student.DoesNotExist:
-        messages.error(request, "Student not found.")
-        return redirect('student_list')  # Adjust as needed
-    except Class.DoesNotExist:
-        messages.error(request, "Class not found.")
-        return redirect('class_list')  # Adjust as needed
-    except Exception as e:
-        messages.error(request, f"Error: {str(e)}")
-        return redirect('class_list')  # Adjust as needed
+    return render(request, 'samsapp/mark_attendance.html', {'classes': classes, 'students': students})
 
 
+def attendance_view(request):
+    today_date = now().date()  # Get today's date in YYYY-MM-DD format
+    return render(request, 'your_template.html', {'today_date': today_date})
 
+# ATTENDANCE TRACKING
+@login_required(login_url='login')
+def attendance_tracking(request):
+    query = request.GET.get('q', '')  # Get the search query from the form
+    results = []
+    student_exists = False  # Flag to check if a student exists in the database
+
+    if query:
+        # Check if the student exists in the student list
+        student_exists = Student.objects.filter(student_fullname__icontains=query).exists()
+
+        if student_exists:
+            # If the student exists, filter their attendance data
+            results = Attendance.objects.filter(
+                student__student_fullname__icontains=query
+            ).select_related('student', 'class_name')  # Optimize queries with joins
+
+    return render(
+        request,
+        'samsapp/attendance_tracking.html',
+        {
+            'results': results,
+            'query': query,
+            'student_exists': student_exists,  # Pass flag to the template
+        }
+    )
+
+
+
+# ACCOUNT SETTINGS
+def account_settings(request):
+    if request.method == 'POST':
+        user = request.user
+        user.username = request.POST['username']
+        user.email = request.POST['email']
+        user.save()
+        return redirect('samsapp/account_settings.html')
+    
+
+# HOME
 @login_required(login_url='login')
 def home(request):
     user = request.user
@@ -76,8 +120,7 @@ def home(request):
 
     return render(request, 'home.html', context)
 
-
-# Use the login_required decorator for views that require login
+# STUDENT LIST
 @login_required(login_url='login')
 def student_list(request):
     students = Student.objects.all()
@@ -94,6 +137,7 @@ def student_list(request):
     # Render the student list along with the form
     return render(request, 'samsapp/student_list.html', {'students': students, 'form': form})
 
+# ADD A STUDENT
 @login_required(login_url='login')
 def student_create(request):
     if request.method == "POST":
@@ -107,6 +151,7 @@ def student_create(request):
     # Render the student list along with the form
     return render(request, 'samsapp/student_list.html', {'form': form})
 
+# UPDATE STUDENT
 
 @login_required(login_url='login')
 def student_update(request, pk):
@@ -119,26 +164,9 @@ def student_update(request, pk):
             return redirect('student_list')
     else:
         form = StudentForm(instance=student)
-    return render(request, 'samsapp/student_form.html', {'form': form, 'is_update': True})
+    return render(request, 'samsapp/student_list.html', {'form': form, 'is_update': True})
 
-# @login_required(login_url='login')
-# def student_delete(request, pk):
-#     student = get_object_or_404(Student, pk=pk)
-#     if request.method == "POST":
-#         student.delete()
-#         messages.success(request, 'Student deleted successfully.')
-#         return redirect('student_list')
-#     return render(request, 'samsapp/student_list.html')
-
-        #cleaned_data = super().clean()
-        #birth_date = cleaned_data.get('birth_date')
-        #enrollment_date = cleaned_data.get('enrollment_date')
-
-        #if birth_date and enrollment_date:
-            #if birth_date == enrollment_date:
-               # raise ValidationError("Birth date and enrollment date cannot be the same.")
-        
-        #return cleaned_data
+# DELETE STUDENT
 
 @login_required(login_url='login')
 def student_delete(request, pk):
@@ -149,6 +177,8 @@ def student_delete(request, pk):
         return redirect('student_list')
     return redirect('student_list')
 
+
+# GENERATE STUDENT REPORT
 @login_required(login_url='login')
 def student_report(request, pk):
     try:
@@ -200,38 +230,17 @@ def student_report(request, pk):
         print(f"Error generating report: {e}")
         return HttpResponse("Error generating report.", status=500)
 
-# @login_required(login_url='login')
 
-# def student_report(request, pk):
-#     try:
-#         student = get_object_or_404(Student, pk=pk)
-#         response = HttpResponse(content_type='text/csv')
-#         response['Content-Disposition'] = f'attachment; filename="student_report_{student.student_id}.csv"'
-
-#         writer = csv.writer(response)
-#         writer.writerow(['Student ID', 'Name', 'Email', 'Birth Date', 'Enrollment Date'])
-
-#         writer.writerow([
-#             student.student_id,
-#             student.student_fullname or '',
-#             student.student_email or '',
-#             student.birth_date or '',
-#             student.enrollment_date or ''
-#         ])
-
-#         return response
-#     except Exception as e:
-#         print(f"Error generating report: {e}")
-#         return HttpResponse("Error generating report.", status=500)
-    
 def some_view(request):
     return HttpResponse("Hello, this is the Ephan view!")
 
+# CLASS LIST
 @login_required(login_url='login')
 def class_list(request):
     classes = Class.objects.all()
     return render(request, 'samsapp/class_list.html', {'classes': classes})
 
+# ADD CLASS
 @login_required(login_url='login')
 def class_add(request):
     if request.method == "POST":
@@ -243,6 +252,7 @@ def class_add(request):
         form = ClassForm()
     return render(request, 'samsapp/class_form.html', {'form': form})
 
+# UPDATE CLASS
 @login_required(login_url='login')
 def class_update(request, class_id):
     class_instance = get_object_or_404(Class, pk=class_id)
@@ -255,6 +265,7 @@ def class_update(request, class_id):
         form = ClassForm(instance=class_instance)
     return render(request, 'samsapp/class_form.html', {'form': form})
 
+# CLASS DELETE
 @login_required(login_url='login')
 def class_delete(request, class_id):
     class_instance = get_object_or_404(Class, pk=class_id)
@@ -263,6 +274,7 @@ def class_delete(request, class_id):
         return redirect('class_list')
     return render(request, 'samsapp/class_confirm_delete.html', {'class': class_instance})
 
+# REGISTRATION
 def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
@@ -276,7 +288,8 @@ def register(request):
         form = UserRegistrationForm()
     return render(request, 'samsapp/register.html', {'form': form})
 
-@login_required(login_url='login')
+
+# USER LIST
 @login_required(login_url='login')
 def user_list(request):
     if request.user.is_staff:
@@ -286,7 +299,7 @@ def user_list(request):
     return render(request, 'samsapp/user_list.html', {'users': users})
 
 
-
+# UPDATE USER
 @login_required(login_url='login')
 def user_update(request, user_id):
     user = get_object_or_404(User, pk=user_id)
@@ -300,6 +313,7 @@ def user_update(request, user_id):
         form = UserUpdateForm(instance=user)
     return render(request, 'samsapp/user_update.html', {'form': form})
 
+# DELETE USER
 @login_required(login_url='login')
 def user_delete(request, user_id):
     user = get_object_or_404(User, pk=user_id)
@@ -309,6 +323,7 @@ def user_delete(request, user_id):
         return redirect('user_list')
     return render(request, 'samsapp/user_confirm_delete.html', {'user': user})
 
+# LOGIN
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -325,12 +340,12 @@ def login_view(request):
     else:
         form = LoginForm()
     return render(request, 'samsapp/login.html', {'form': form})
-
+#LOGOUT
 def logout_view(request):
     logout(request)
     return redirect('login')
 
-
+# NOTIFICATION
 @login_required(login_url='login')
 def manage_notifications(request):
     # Fetch all notifications ordered by creation time
@@ -344,6 +359,7 @@ def manage_notifications(request):
         'unread_count': unread_count
     })
 
+#NOTIFICATION MARK AS READ
 @login_required(login_url='login')
 def mark_as_read(request, notification_id):
     notification = get_object_or_404(Notification, id=notification_id)
@@ -352,13 +368,14 @@ def mark_as_read(request, notification_id):
         notification.save()
     return redirect('manage_notifications')
 
+#CLASS LIST
 @login_required(login_url='login')
 def class_list(request):
     classes = Class.objects.all()
     unread_count = Notification.objects.filter(is_read=False).count()
     return render(request, 'samsapp/class_list.html', {'classes': classes, 'unread_count': unread_count})
 
-
+#PASSWORD RECOVERY
 def password_recovery(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -386,8 +403,7 @@ def password_recovery(request):
 
     return render(request, "samsapp/password_recovery.html")
 
-
-
+#ASSIGN_STUDENT
 @login_required(login_url='login')
 def assign_student(request):
     if request.method == "POST":

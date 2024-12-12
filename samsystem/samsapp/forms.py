@@ -57,3 +57,4 @@ class AttendanceForm(forms.ModelForm):
             'class_name': forms.Select(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
         }
+        

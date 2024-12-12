@@ -22,12 +22,21 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),  # Add this line
     path('logout/', views.logout_view, name='logout'),
     path('manage-notifications/', views.manage_notifications, name='manage_notifications'),
- path('attendance/mark/<int:student_id>/<int:class_id>/', views.mark_attendance, name='mark_attendance'),
- path('mark-as-read/<int:notification_id>/', views.mark_as_read, name='mark_as_read'),
- path('password_recovery/', views.password_recovery, name='password_recovery'),
- path('assign_student/', views.assign_student, name='assign_student'),
-path('assign_student/<str:student_id>/', views.assign_student, name='assign_student')
+  
+    path('mark-attendance/', views.mark_attendance, name='mark_attendance'),
 
+
+    path('mark-as-read/<int:notification_id>/', views.mark_as_read, name='mark_as_read'),
+    path('password_recovery/', views.password_recovery, name='password_recovery'),
+    path('assign_student/', views.assign_student, name='assign_student'),
+    path('assign_student/<str:student_id>/', views.assign_student, name='assign_student'),
+
+    # Attendance tracking page
+    path('attendance/tracking/', views.attendance_tracking, name='attendance_tracking'),
+    
+    # Account settings page
+    path('account/settings/', views.account_settings, name='account_settings'),
+    
 
 ]
     
