@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from .models import Class
-from .forms import UserRegistrationForm, UserUpdateForm, StudentForm, ClassForm, LoginForm
+from .forms import UserRegistrationForm, UserUpdateForm, StudentForm, ClassForm, LoginForm, AttendanceForm
 from .models import Notification
 from reportlab.lib.pagesizes import letter
 from django.http import HttpResponse
@@ -27,7 +27,16 @@ from datetime import datetime
 from django.contrib.auth import update_session_auth_hash
 from django.utils.timezone import now
 from .models import Profile
+from django.utils import timezone
 from .forms import ProfileForm
+from django.http import JsonResponse
+import json
+
+
+def get_students_for_class(request, class_id):
+    students = Student.objects.filter(class_id=class_id)
+    student_data = [{'id': student.id, 'name': student.student_fullname} for student in students]
+    return JsonResponse({'students': student_data})
 
 def search_view(request):
     query = request.GET.get('q', '')  # Get the search term from the URL
@@ -88,38 +97,49 @@ def dashboard(request):
 # # MARK ATTENDANCE
 # def mark_attendance(request):
 #     return render(request, 'samsapp/mark_attendance.html')
-@login_required(login_url='login')
 def mark_attendance(request):
-    classes = Class.objects.all()  # Get all classes
-    students = Student.objects.all()  # Get all students
-
     if request.method == 'POST':
-        class_id = request.POST.get('class_id')  # Get selected class
-        date = request.POST.get('attendance_date')  # Get attendance date
+        class_id = request.POST.get('class_id')
+        attendance_date = request.POST.get('attendance_date')
+        attendance_data = request.POST.get('attendance_data')
+        
+        # Process attendance data
+        attendance_dict = json.loads(attendance_data)
+        total_present = total_absent = total_late = 0
+        
+        for student_id, status in attendance_dict.items():
+            attendance_record = Attendance(student_id=student_id, class_id=class_id, date=attendance_date, status=status)
+            attendance_record.save()
+            
+            if status == 'present':
+                total_present += 1
+            elif status == 'absent':
+                total_absent += 1
+            elif status == 'late':
+                total_late += 1
+        
+        # Redirect to dashboard with attendance statistics
+        return redirect('dashboard', total_present=total_present, total_absent=total_absent, total_late=total_late)
 
-        # Check if class_id and date are provided
-        if class_id and date:
-            # Process attendance for each student
-            for student in students:
-                attendance_status = request.POST.get(f'attendance_{student.student_id}')  # Get attendance status for each student
+    classes = Class.objects.all()
+    students = Student.objects.all()
+    today_date = timezone.now().date()
+    return render(request, 'samsapp/mark_attendance.html', {'classes': classes, 'students': students, 'today_date': today_date})
 
-                if attendance_status:
-                    # Create or update attendance record
-                    Attendance.objects.update_or_create(
-                        student=student,
-                        class_id=class_id,
-                        date=date,
-                        defaults={'status': attendance_status}
-                    )
 
-            messages.success(request, "Attendance marked successfully!")
-            return redirect('attendance_tracking')  # Redirect to attendance tracking page
-
-        else:
-            messages.error(request, "Please select a class and date.")
-            return redirect('mark_attendance')  # Redirect back to attendance marking form
-
-    return render(request, 'samsapp/mark_attendance.html', {'classes': classes, 'students': students})
+@login_required
+def submit_attendance(request):
+    if request.method == 'POST':
+        form = AttendanceForm(request.POST)
+        if form.is_valid():
+            # Set the date field to the current date and time if it's not provided
+            attendance = form.save(commit=False)
+            attendance.date = timezone.now()  # Set the current date and time
+            attendance.save()  # Save the attendance object
+            return redirect('dashboard')  # Redirect to the dashboard after submission
+    else:
+        form = AttendanceForm()
+    return render(request, 'samsapp/attendance_form.html', {'form': form})
 
 @login_required(login_url='login')
 def attendance_view(request):
@@ -127,31 +147,20 @@ def attendance_view(request):
     return render(request, 'samsapp/attendance_tracking.html', {'today_date': today_date})
 
 # ATTENDANCE TRACKING
-@login_required(login_url='login')
+@login_required
 def attendance_tracking(request):
-    query = request.GET.get('q', '')  # Get the search query from the form
-    results = []
-    student_exists = False  # Flag to check if a student exists in the database
-
+    query = request.GET.get('q', '')
     if query:
-        # Check if the student exists in the student list
-        student_exists = Student.objects.filter(student_fullname__icontains=query).exists()
+        attendance_data = Attendance.objects.filter(student__student_fullname__icontains=query)
+    else:
+        attendance_data = Attendance.objects.all()
 
-        if student_exists:
-            # If the student exists, filter their attendance data
-            results = Attendance.objects.filter(
-                student__student_fullname__icontains=query
-            ).select_related('student', 'class_name')  # Optimize queries with joins
+    print("Attendance Data:", attendance_data)  # Debugging line
 
-    return render(
-        request,
-        'samsapp/attendance_tracking.html',
-        {
-            'results': results,
-            'query': query,
-            'student_exists': student_exists,  # Pass flag to the template
-        }
-    )
+    return render(request, 'samsapp/attendance_tracking.html', {
+        'attendance_data': attendance_data,
+        'query': query,
+    })
 
 
 

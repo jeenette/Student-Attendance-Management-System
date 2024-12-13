@@ -569,42 +569,51 @@
         <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i></a>
     </div>
     <div class="container">
-      <h1>Mark Attendance</h1>
-      <form method="POST">
-         {% csrf_token %}
-         <div class="class-selection">
-             <label for="class_id">Select Class:</label>
-             <select name="class_id" id="class_id" required>
-                 <option value="" disabled selected>Select Class</option>
-                 {% for class in classes %}
-                     <option value="{{ class.id }}">{{ class.class_name }}</option>
-                 {% endfor %}
-             </select>
+        <h1>Mark Attendance</h1>
+        <form id="attendanceForm" method="POST" action="{% url 'submit_attendance' %}">
+            {% csrf_token %}
+            <div class="class-selection">
+                <label for="class_id">Select Class:</label>
+                <select name="class_id" id="class_id" required>
+                    <option value="" disabled selected>Select Class</option>
+                    {% for class in classes %}
+                        <option value="{{ class.id }}">{{ class.class_name }}</option>
+                    {% endfor %}
+                </select>
 
-             <label for="attendance_date">Attendance Date:</label>
-             <input type="date" name="attendance_date" id="attendance_date" required value="{{ today_date }}" max="{{ today_date }}" min="{{ today_date }}">
-         </div>
-
-         <div id="student-list">
-            {% for student in students %}
-                <div class="student-card">
-                    <div class="student-avatar" ></div>
-                    <div>
-                        <p>{{ student.student_fullname }}</p>
-                        <p>Attendance Status:</p>
-                        <button class="attendance-btn present" onclick="updateAttendance('{{ student.student_id }}', 'present', this)">P</button>
-                        <button class="attendance-btn late" onclick="updateAttendance('{{ student.student_id }}', 'late', this)">L</button>
-                        <button class="attendance-btn absent" onclick="updateAttendance('{{ student.student_id }}', 'absent', this)">A</button>
+                <label for="attendance_date">Attendance Date:</label>
+                <input type="date" name="attendance_date" id="attendance_date" required value="{{ today_date }}" max="{{ today_date }}" min="{{ today_date }}">
+            </div>
+<!-- 
+            <div id="student-list">
+                {% for student in students %}
+                    <div class="student-card">
+                        <div class="student-avatar"></div>
+                        <div>
+                            <p>{{ student.student_fullname }}</p>
+                            <p>Attendance Status:</p>
+                            <button type="button" class="attendance-btn present" onclick="updateAttendance('{{ student.student_id }}', 'present', this)">P</button>
+                            <button type="button" class="attendance-btn late" onclick="updateAttendance('{{ student.student_id }}', 'late', this)">L</button>
+                            <button type="button" class="attendance-btn absent" onclick="updateAttendance('{{ student.student_id }}', 'absent', this)">A</button>
+                        </div></div>
+                        {% endfor %}
                     </div>
-                </div>
-            {% endfor %}
-        </div>
+         -->
+                    <input type="hidden" name="attendance_data" id="attendance_data">
+                    <button type="submit">Submit Attendance</button>
+                </form>
+            </div>
         
+            <script>
+                const attendanceData = {};
         
-
-         <button type="submit">Submit Attendance</button>
-     </form>
-      
- </div>
+                function updateAttendance(studentId, status, button) {
+                    attendanceData[studentId] = status;
+                    // Update button styles or states as needed
+                }
+                document.getElementById('attendanceForm').addEventListener('submit', function(event) {
+            document.getElementById('attendance_data').value = JSON.stringify(attendanceData);
+        });
+    </script>
 </body>
 </html>

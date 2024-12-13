@@ -411,71 +411,32 @@
                 <button class="btn btn-primary" type="submit">Search</button>
             </div>
         </form>
-        
-        {% if query %}
-            {% if student_exists %}
-                {% if results %}
-                    <!-- Results Table -->
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Student Name</th>
-                                <th>Class</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for record in results %}
-                                <tr>
-                                    <td>{{ record.student.student_fullname }}</td>
-                                    <td>{{ record.class_name.class_name }}</td>
-                                    <td>{{ record.date|date:"Y-m-d H:i" }}</td>
-                                    <td>{{ record.status }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                {% else %}
-                    <p class="text-warning">No attendance records found for "{{ query }}".</p>
-                {% endif %}
-            {% else %}
-                <p class="text-danger">Student "{{ query }}" does not exist in the database.</p>
-            {% endif %}
-        {% endif %}
-
         <!-- Attendance Table -->
         <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>Student ID</th>
                     <th>Student Name</th>
-                    <th>Status</th>
-                    <th>Time</th>
-                    <th>Action</th>
+                    <th>Class Code</th>
+                    <th>Status</th>  <th>Date and Time</th>
                 </tr>
             </thead>
-            <tbody>
-                {% if attendance_data %}
-                    {% for attendance in attendance_data %}
-                        <tr>
-                            <td>{{ attendance.student.student_id }}</td>
-                            <td>{{ attendance.student.student_fullname }}</td>
-                            <td>{{ attendance.status }}</td>
-                            <td>{{ attendance.date|date:"Y-m-d H:i" }}</td>
-                            <td>
-                                <a href="{% url 'mark_attendance' student_id=attendance.student.id class_id=attendance.class_name.id %}" 
-                                   class="btn btn-primary">Mark Attendance</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                {% else %}
+            <tbody>  {% if attendance_data %}
+                {% for attendance in attendance_data %}
                     <tr>
-                        <td colspan="5" class="text-center">No attendance records found.</td>
+                        <td>{{ attendance.student.student_id }}</td>
+                        <td>{{ attendance.student.student_fullname }}</td>
+                        <td>{{ attendance.class_name.course_code }}</td>
+                        <td>{{ attendance.status }}</td>   <td>{{ attendance.date|date:"Y-m-d H:i A" }}</td>
                     </tr>
-                {% endif %}
-            </tbody>
-        </table>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">No attendance records found.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
     </div>
 
     <!-- Add Bootstrap JS (optional, for interactive components) -->
