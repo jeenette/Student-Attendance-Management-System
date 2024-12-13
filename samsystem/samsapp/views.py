@@ -17,7 +17,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.hashers import make_password
 from django.urls import reverse
 from django.contrib.auth.models import User
-from samsapp.models import Student, Class
+from samsapp.models import Student, Class, AttendanceReport, Attendance
 from .models import Attendance
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -31,7 +31,7 @@ from django.utils import timezone
 from .forms import ProfileForm
 from django.http import JsonResponse
 import json
-
+from django.template.loader import render_to_string
 
 def get_students_for_class(request, class_id):
     students = Student.objects.filter(class_id=class_id)
@@ -155,11 +155,57 @@ def attendance_tracking(request):
     else:
         attendance_data = Attendance.objects.all()
 
-    print("Attendance Data:", attendance_data)  # Debugging line
+    # If the user wants to download the attendance report as CSV
+    if 'download_csv' in request.GET:
+        # Create the HTTP response with CSV content
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="attendance_report.csv"'
 
+        # Create a CSV writer
+        writer = csv.writer(response)
+        
+        # Write the headers
+        writer.writerow(['Student ID', 'Student Name', 'Class Code', 'Status', 'Date and Time'])
+
+        # Write the attendance data
+        for attendance in attendance_data:
+            writer.writerow([
+                attendance.student.student_id,
+                attendance.student.student_fullname,
+                attendance.class_code,
+                attendance.status,
+                attendance.date_time
+            ])
+
+        return response
+
+    # Render the attendance data in the template
     return render(request, 'samsapp/attendance_tracking.html', {
         'attendance_data': attendance_data,
         'query': query,
+    })
+
+@login_required
+def get_status(request):
+    student_id = request.GET.get('student_id')  # Assuming the student_id is passed as a query parameter
+    class_id = request.GET.get('class_id')  # Assuming the class_id is passed as a query parameter
+    
+    # Fetch the most recent attendance status for the student in the specific class
+    try:
+        # Get the latest attendance record for the student in the class
+        attendance = Attendance.objects.filter(student_id=student_id, class_id=class_id).order_by('-date').first()
+        
+        if attendance:
+            status = attendance.status  # The student's attendance status (present/absent/late)
+        else:
+            status = "No attendance record found"  # If no record found for the student in the class
+    except Attendance.DoesNotExist:
+        status = "No attendance record found"  # If no record found for the student in the class
+    
+    return JsonResponse({
+        'student_id': student_id,
+        'class_id': class_id,
+        'status': status
     })
 
 

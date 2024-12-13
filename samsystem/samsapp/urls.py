@@ -45,6 +45,8 @@ urlpatterns = [
    path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('search/', views.search_view, name='search_view'),
 
+
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

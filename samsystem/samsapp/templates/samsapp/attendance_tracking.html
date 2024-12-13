@@ -418,25 +418,37 @@
                     <th>Student ID</th>
                     <th>Student Name</th>
                     <th>Class Code</th>
-                    <th>Status</th>  <th>Date and Time</th>
+                    <th>Status</th> 
+                    <th>Date and Time</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>  {% if attendance_data %}
-                {% for attendance in attendance_data %}
+            <tbody>
+                {% if attendance_data %}
+                    {% for attendance in attendance_data %}
+                        <tr>
+                            <td>{{ attendance.student.student_id }}</td>
+                            <td>{{ attendance.student.student_fullname }}</td>
+                            <td>{{ attendance.class_name.course_code }}</td>
+                            <td>{{ attendance.status }}</td>
+                            <td>{{ attendance.date|date:"Y-m-d H:i A" }}</td>
+                            <td class="text-center">
+                                {% if report %}
+                                <a href="{% url 'attendance_report' report.pk %}" class="btn btn-success btn-sm">PDF</a>
+                            {% else %}
+                                <p>No report available.</p>
+                            {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
                     <tr>
-                        <td>{{ attendance.student.student_id }}</td>
-                        <td>{{ attendance.student.student_fullname }}</td>
-                        <td>{{ attendance.class_name.course_code }}</td>
-                        <td>{{ attendance.status }}</td>   <td>{{ attendance.date|date:"Y-m-d H:i A" }}</td>
+                        <td colspan="5" class="text-center">No attendance records found.</td>
                     </tr>
-                {% endfor %}
-            {% else %}
-                <tr>
-                    <td colspan="5" class="text-center">No attendance records found.</td>
-                </tr>
-            {% endif %}
-        </tbody>
-    </table>
+                {% endif %}
+        
+            </tbody>
+        </table>
     </div>
 
     <!-- Add Bootstrap JS (optional, for interactive components) -->

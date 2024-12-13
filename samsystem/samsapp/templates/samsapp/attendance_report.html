@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Attendance Report</h1>
+    <p>Query: {{ query }}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Class Code</th>
+                <th>Status</th>
+                <th>Date and Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for attendance in attendance_data %}
+                <tr>
+                    <td>{{ attendance.student.student_id }}</td>
+                    <td>{{ attendance.student.student_fullname }}</td>
+                    <td>{{ attendance.class_code }}</td>
+                    <td>{{ attendance.status }}</td>
+                    <td>{{ attendance.date_time }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="5">No attendance data available.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
